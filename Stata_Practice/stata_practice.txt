@@ -1,0 +1,538 @@
+------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\dsimb\Downloads\R-to-Stata\Stata_Data\stata_practice.txt
+  log type:  text
+ opened on:  20 Dec 2022, 11:40:38
+
+. 
+. *R uses several packages to simplify the coding process for several
+. *statistical procedures.
+. 
+. *library("car")       #used to recode variables efficiently
+. *library("MASS")      #used to compute studentized  residuals
+. *library("caret")     #used to assess overfitting
+. *library("skedastic") #used to assess homoskedasticity
+. *library("lmtest")    #used to assess/test for functional form
+. 
+. *In Stata, all of these simplified processes are already built in.
+. 
+. *With a working directory set, we can load data into R like so. 
+. *Running clear at the end tells R to clear out its current data to 
+. *load the new set. This is similar to the R commands:
+. *#student.set <-read.csv("students.csv", stringsAsFactors = FALSE)#*
+. 
+. *#lapop<-read.csv("Lapop_extra.csv", na.strings = c("NA",".a",".b",".c"), st
+> ringsAsFactors = F)#*
+. 
+. *#firearms<-read.csv("firearms.csv", stringsAsFactors = F)#*
+. 
+. *#blackturnout<-read.csv("blackturnout.csv")#*
+. 
+. use blackturnout.dta, clear
+
+. 
+. use firearms.dta, clear
+
+. 
+. use Lapop_extra.dta, clear
+
+. 
+. use students.dta, clear
+
+. 
+. *Alternatively, we can also feed Stata the file path and skip setting
+. *a working directory:
+. 
+. use "C:\Users\dsimb\Downloads\R-to-Stata\Stata_Data\blackturnout.dta", clear
+
+. 
+. use "C:\Users\dsimb\Downloads\R-to-Stata\Stata_Data\firearms.dta", clear
+
+. 
+. use "C:\Users\dsimb\Downloads\R-to-Stata\Stata_Data\Lapop_extra.dta", clear
+
+. 
+. use "C:\Users\dsimb\Downloads\R-to-Stata\Stata_Data\students.dta", clear
+
+.  
+. *We can look at the number of observations, variables, and data type 
+. *using this command:
+. 
+. describe
+
+Contains data from C:\Users\dsimb\Downloads\R-to-Stata\Stata_Data\students.dta
+  obs:            60                          
+ vars:            18                          20 Dec 2022 10:20
+ size:         1,860                          
+------------------------------------------------------------------------------
+              storage   display    value
+variable name   type    format     label      variable label
+------------------------------------------------------------------------------
+subject         byte    %8.0g                 
+sex             byte    %8.0g                 
+age             byte    %8.0g                 
+hsgpa           float   %9.0g                 
+cogpa           float   %9.0g                 
+dhome           int     %8.0g                 
+dres            float   %9.0g                 
+tv              float   %9.0g                 
+sport           byte    %8.0g                 
+news            byte    %8.0g                 
+aids            byte    %8.0g                 
+veg             byte    %8.0g                 
+affil           byte    %8.0g                 
+ideol           byte    %8.0g                 
+relig           byte    %8.0g                 
+abor            byte    %8.0g                 
+affirm          byte    %8.0g                 
+life            byte    %8.0g                 
+------------------------------------------------------------------------------
+Sorted by: 
+
+. 
+. *We can get descriptive statistics using the su command. The sep(0)
+. *at the end tells Stata to not put a line separator between every
+. *3 variables (makes things look nicer):
+. 
+. *for all variables:
+. 
+. su, sep(0)
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+     subject |         60        30.5    17.46425          1         60
+         sex |         60    .5166667    .5039393          0          1
+         age |         60    29.16667    8.475621         22         71
+       hsgpa |         60    3.308333    .4596578          2          4
+       cogpa |         60    3.453333     .351494        2.6          4
+       dhome |         60      1232.2    1681.748          0       8000
+        dres |         60    3.818333    4.117902         .2         20
+          tv |         60    7.266667    6.717336          0         37
+       sport |         60    5.483333    3.872947          0         16
+        news |         60    4.083333    3.004469          0         14
+        aids |         60    1.433333      2.4312          0         11
+         veg |         60         .15    .3600847          0          1
+       affil |         60        2.05     .871877          1          3
+       ideol |         60    3.033333    1.636104          1          7
+       relig |         60    1.166667    .9771398          0          3
+        abor |         60    .7833333    .4154502          0          1
+      affirm |         60    .7166667    .4544196          0          1
+        life |         60        1.75    .8561839          1          3
+
+. 
+. *for specific variables:
+. 
+. su age hsgpa cogpa, sep(0)
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         age |         60    29.16667    8.475621         22         71
+       hsgpa |         60    3.308333    .4596578          2          4
+       cogpa |         60    3.453333     .351494        2.6          4
+
+. 
+. *for descriptives of a specfific group:
+. 
+. su age hsgpa cogpa if affil == 1, sep(0)
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         age |         21    29.80952    7.737048         23         50
+       hsgpa |         21    3.238095    .4695489          2        3.8
+       cogpa |         21    3.561905     .324771          3          4
+
+. 
+. su age hsgpa cogpa if affil == 2, sep(0) 
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         age |         15    27.66667    5.205309         23         41
+       hsgpa |         15    3.206667    .5535169        2.2          4
+       cogpa |         15    3.466667     .377334        2.6          4
+
+. 
+. *for descriptives of a specific student:
+. 
+. su if subject == 7, sep(0)
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+     subject |          1           7           .          7          7
+         sex |          1           0           .          0          0
+         age |          1          24           .         24         24
+       hsgpa |          1         3.6           .        3.6        3.6
+       cogpa |          1         3.7           .        3.7        3.7
+       dhome |          1           0           .          0          0
+        dres |          1          .2           .         .2         .2
+          tv |          1           5           .          5          5
+       sport |          1          12           .         12         12
+        news |          1           4           .          4          4
+        aids |          1           2           .          2          2
+         veg |          1           0           .          0          0
+       affil |          1           3           .          3          3
+       ideol |          1           2           .          2          2
+       relig |          1           1           .          1          1
+        abor |          1           1           .          1          1
+      affirm |          1           1           .          1          1
+        life |          1           1           .          1          1
+
+. 
+. *The other command we'll use to do preliminary investigation of the data
+. *is tab. This command puts the frequencies of variable categories into
+. *a table:
+. 
+. *a single table:
+. 
+. tab sex
+
+        sex |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         29       48.33       48.33
+          1 |         31       51.67      100.00
+------------+-----------------------------------
+      Total |         60      100.00
+
+. 
+. *a single table for a specific group:
+. 
+. tab sex if cogpa > 3.0
+
+        sex |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |         23       48.94       48.94
+          1 |         24       51.06      100.00
+------------+-----------------------------------
+      Total |         47      100.00
+
+. 
+. tab sex if affil == 2
+
+        sex |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |          9       60.00       60.00
+          1 |          6       40.00      100.00
+------------+-----------------------------------
+      Total |         15      100.00
+
+. 
+. *We can also cross-tabulate two variables:
+. 
+. tab sex affil
+
+           |              affil
+       sex |         1          2          3 |     Total
+-----------+---------------------------------+----------
+         0 |         9          9         11 |        29 
+         1 |        12          6         13 |        31 
+-----------+---------------------------------+----------
+     Total |        21         15         24 |        60 
+
+. 
+. *run a chi-sq test on the cross-tab:
+. 
+. tab sex affil, chi2
+
+           |              affil
+       sex |         1          2          3 |     Total
+-----------+---------------------------------+----------
+         0 |         9          9         11 |        29 
+         1 |        12          6         13 |        31 
+-----------+---------------------------------+----------
+     Total |        21         15         24 |        60 
+
+          Pearson chi2(2) =   1.1298   Pr = 0.568
+
+. 
+. *if we want to tab multiple single-variable tables at the same time, 
+. *we can use tab1:
+. 
+. tab1 age hsgpa cogpa
+
+-> tabulation of age  
+
+        age |      Freq.     Percent        Cum.
+------------+-----------------------------------
+         22 |          3        5.00        5.00
+         23 |         10       16.67       21.67
+         24 |          7       11.67       33.33
+         25 |          2        3.33       36.67
+         26 |          8       13.33       50.00
+         27 |          5        8.33       58.33
+         28 |          5        8.33       66.67
+         29 |          1        1.67       68.33
+         30 |          1        1.67       70.00
+         31 |          4        6.67       76.67
+         32 |          3        5.00       81.67
+         33 |          1        1.67       83.33
+         34 |          1        1.67       85.00
+         35 |          1        1.67       86.67
+         36 |          1        1.67       88.33
+         39 |          1        1.67       90.00
+         41 |          2        3.33       93.33
+         44 |          1        1.67       95.00
+         50 |          2        3.33       98.33
+         71 |          1        1.67      100.00
+------------+-----------------------------------
+      Total |         60      100.00
+
+-> tabulation of hsgpa  
+
+      hsgpa |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          2 |          1        1.67        1.67
+        2.1 |          1        1.67        3.33
+        2.2 |          1        1.67        5.00
+        2.3 |          1        1.67        6.67
+        2.7 |          1        1.67        8.33
+        2.8 |          1        1.67       10.00
+          3 |         14       23.33       33.33
+        3.1 |          1        1.67       35.00
+        3.2 |          3        5.00       40.00
+        3.3 |          6       10.00       50.00
+        3.4 |          5        8.33       58.33
+        3.5 |          7       11.67       70.00
+        3.6 |          3        5.00       75.00
+        3.7 |          4        6.67       81.67
+        3.8 |          6       10.00       91.67
+          4 |          5        8.33      100.00
+------------+-----------------------------------
+      Total |         60      100.00
+
+-> tabulation of cogpa  
+
+      cogpa |      Freq.     Percent        Cum.
+------------+-----------------------------------
+        2.6 |          1        1.67        1.67
+        2.8 |          1        1.67        3.33
+          3 |         11       18.33       21.67
+        3.1 |          2        3.33       25.00
+        3.2 |          4        6.67       31.67
+        3.3 |          3        5.00       36.67
+        3.4 |          3        5.00       41.67
+        3.5 |         11       18.33       60.00
+        3.6 |          3        5.00       65.00
+        3.7 |          6       10.00       75.00
+        3.8 |          7       11.67       86.67
+        3.9 |          4        6.67       93.33
+          4 |          4        6.67      100.00
+------------+-----------------------------------
+      Total |         60      100.00
+
+. 
+. *Give descriptives of another variable based off of the tabulated
+. *variable's categories:
+. 
+. tab1 age hsgpa cogpa, summarize(sex)
+
+-> tabulation of age  
+
+            |           Summary of sex
+        age |        Mean   Std. Dev.       Freq.
+------------+------------------------------------
+         22 |           1           0           3
+         23 |          .4   .51639778          10
+         24 |   .42857143   .53452248           7
+         25 |           1           0           2
+         26 |        .375   .51754917           8
+         27 |           1           0           5
+         28 |          .4   .54772256           5
+         29 |           1           0           1
+         30 |           0           0           1
+         31 |          .5   .57735027           4
+         32 |   .33333333   .57735027           3
+         33 |           0           0           1
+         34 |           0           0           1
+         35 |           1           0           1
+         36 |           0           0           1
+         39 |           0           0           1
+         41 |           1           0           2
+         44 |           1           0           1
+         50 |          .5   .70710678           2
+         71 |           0           0           1
+------------+------------------------------------
+      Total |   .51666667   .50393928          60
+
+-> tabulation of hsgpa  
+
+            |           Summary of sex
+      hsgpa |        Mean   Std. Dev.       Freq.
+------------+------------------------------------
+          2 |           0           0           1
+        2.1 |           1           0           1
+        2.2 |           0           0           1
+        2.3 |           0           0           1
+        2.7 |           0           0           1
+        2.8 |           0           0           1
+          3 |   .71428571   .46880723          14
+        3.1 |           0           0           1
+        3.2 |   .33333333   .57735027           3
+        3.3 |   .33333333   .51639778           6
+        3.4 |          .4   .54772256           5
+        3.5 |   .71428571   .48795004           7
+        3.6 |   .33333333   .57735027           3
+        3.7 |         .75          .5           4
+        3.8 |          .5   .54772256           6
+          4 |          .6   .54772256           5
+------------+------------------------------------
+      Total |   .51666667   .50393928          60
+
+-> tabulation of cogpa  
+
+            |           Summary of sex
+      cogpa |        Mean   Std. Dev.       Freq.
+------------+------------------------------------
+        2.6 |           0           0           1
+        2.8 |           1           0           1
+          3 |   .54545455   .52223297          11
+        3.1 |           0           0           2
+        3.2 |          .5   .57735027           4
+        3.3 |   .66666667   .57735027           3
+        3.4 |           0           0           3
+        3.5 |   .27272727   .46709937          11
+        3.6 |   .33333333   .57735027           3
+        3.7 |   .66666667   .51639778           6
+        3.8 |   .57142857   .53452248           7
+        3.9 |           1           0           4
+          4 |           1           0           4
+------------+------------------------------------
+      Total |   .51666667   .50393928          60
+
+. 
+. *We can subset data in Stata as well but its an annoying process.
+. *We first need to preserve our data as is, create our subset using
+. *the keep command, doing our analyses, and then restoring our data
+. *to its preserved state. This is similar to the following R code:
+. 
+. *Create a subset of the data that ONLY includes students that are vegetarian
+> . 
+. *#vegetarian <-subset(student.set,student.set$veg==1)#*
+. 
+. *How many vegetarians are female?
+. *#sum(vegetarian$sex==1)#*
+. 
+. *What is the mean college GPA of vegetarians?
+. *#mean(vegetarian$cogpa)#*
+. 
+. preserve
+
+. 
+. keep if veg == 1
+(51 observations deleted)
+
+. 
+. su sex if sex == 1
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+         sex |          6           1           0          1          1
+
+. *OR
+. tab sex
+
+        sex |      Freq.     Percent        Cum.
+------------+-----------------------------------
+          0 |          3       33.33       33.33
+          1 |          6       66.67      100.00
+------------+-----------------------------------
+      Total |          9      100.00
+
+. 
+. su cogpa
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+       cogpa |          9    3.388889    .3100179          3        3.8
+
+. 
+. restore
+
+. 
+. *We can also look at group differences in means using tab and,
+. *alternatively, using tabstat (tabulates statistics of variables).
+. *This is similar to the following R command:
+. *#tapply(student.set$hsgpa, student.set$affil, mean, na.rm=TRUE)#*
+. 
+. *Look at the Total column for mean differences with this command:
+. 
+. tab affil hsgpa, summarize(hsgpa) mean
+
+                              Means of hsgpa
+
+           |                       hsgpa
+     affil |         2        2.1        2.2        2.3        2.7 |     Total
+-----------+-------------------------------------------------------+----------
+         1 |         2  2.0999999          .          .          . | 3.2380952
+         2 |         .          .        2.2        2.3        2.7 | 3.2066666
+         3 |         .          .          .          .          . | 3.4333333
+-----------+-------------------------------------------------------+----------
+     Total |         2  2.0999999        2.2        2.3        2.7 | 3.3083333
+
+           |                       hsgpa
+     affil |       2.8          3        3.1        3.2        3.3 |     Total
+-----------+-------------------------------------------------------+----------
+         1 |         .          3          .          .        3.3 | 3.2380952
+         2 |       2.8          3          .          .        3.3 | 3.2066666
+         3 |         .          3  3.0999999        3.2          . | 3.4333333
+-----------+-------------------------------------------------------+----------
+     Total |       2.8          3  3.0999999        3.2        3.3 | 3.3083333
+
+           |                       hsgpa
+     affil |       3.4        3.5        3.6        3.7        3.8 |     Total
+-----------+-------------------------------------------------------+----------
+         1 | 3.4000001        3.5          .        3.7        3.8 | 3.2380952
+         2 |         .          .  3.5999999        3.7        3.8 | 3.2066666
+         3 | 3.4000001        3.5  3.5999999        3.7        3.8 | 3.4333333
+-----------+-------------------------------------------------------+----------
+     Total | 3.4000001        3.5  3.5999999        3.7        3.8 | 3.3083333
+
+           |   hsgpa
+     affil |         4 |     Total
+-----------+-----------+----------
+         1 |         . | 3.2380952
+         2 |         4 | 3.2066666
+         3 |         4 | 3.4333333
+-----------+-----------+----------
+     Total |         4 | 3.3083333
+
+. 
+. *Alternatively, tabstat can do the same thing but simplified:
+. 
+. tabstat hsgpa, by(affil) statistics(mean sd)
+
+Summary for variables: hsgpa
+     by categories of: affil 
+
+   affil |      mean        sd
+---------+--------------------
+       1 |  3.238095  .4695489
+       2 |  3.206667  .5535169
+       3 |  3.433333   .369096
+---------+--------------------
+   Total |  3.308333  .4596578
+------------------------------
+
+. 
+. *We can create a bar graph of a variable in Stata using the
+. *graph bar command. This is similar to the R command:
+. *#barplot(table(student.set$abor),
+.         *main = "Views on Abortion",
+.         *xlab = "Supports Legal Abortion = 1, 
+.                 *Does not Support Legal Abortion = 0")#*
+. 
+. *We can't create a barplot in Stata, but we can create a 
+. *histogram of the frequencies of each variable category:
+. 
+. hist abor, frequency title(Views on Abortion) xtitle("Does not Support Legal
+>  Abortion = 0, Supports Legal Abortion = 1")
+(bin=7, start=0, width=.14285714)
+
+. 
+. 
+. 
+. 
+. 
+. 
+. 
+end of do-file
+
+. capture log close
