@@ -24,7 +24,7 @@ cd "C:\Users\dsimb\Downloads\R-to-Stata\Stata_Data"
 
 capture log close
 
-log using "C:\Users\dsimb\Downloads\R-to-Stata\Stata_Practice\stata_practice.txt", replace t
+log using "C:\Users\dsimb\Downloads\R-to-Stata\Stata_Practice\R-to-Stata.txt", replace t
 
 *R uses several packages to simplify the coding process for several
 *statistical procedures.
@@ -35,7 +35,8 @@ log using "C:\Users\dsimb\Downloads\R-to-Stata\Stata_Practice\stata_practice.txt
 *library("skedastic") #used to assess homoskedasticity
 *library("lmtest")    #used to assess/test for functional form
 
-*In Stata, all of these simplified processes are already built in.
+*In Stata, all of these simplified processes are already built in
+*(except for the overfitting test in the "caret" package).
 
 *With a working directory set, we can load data into Stata like so.
 *All Stata data files have the extension .dta. Running clear at 
@@ -57,16 +58,21 @@ use Lapop_extra.dta, clear
 
 use students.dta, clear
 
+*IMPORTANT: R lets us load in multiple sets of data per session. With Stata,
+*we can only import one dataset at a time. Each time you load in a new 
+*dataset with ', clear' at the end, Stata will load in the new data
+*and kick the old data out.
+
 *Alternatively, we can also feed Stata the file path and skip setting
 *a working directory:
 
-use "C:\Users\dsimb\Downloads\R-to-Stata\Stata_Data\blackturnout.dta", clear
+*use "C:\Users\dsimb\Downloads\R-to-Stata\Stata_Data\blackturnout.dta", clear
 
-use "C:\Users\dsimb\Downloads\R-to-Stata\Stata_Data\firearms.dta", clear
+*use "C:\Users\dsimb\Downloads\R-to-Stata\Stata_Data\firearms.dta", clear
 
-use "C:\Users\dsimb\Downloads\R-to-Stata\Stata_Data\Lapop_extra.dta", clear
+*use "C:\Users\dsimb\Downloads\R-to-Stata\Stata_Data\Lapop_extra.dta", clear
 
-use "C:\Users\dsimb\Downloads\R-to-Stata\Stata_Data\students.dta", clear
+*use "C:\Users\dsimb\Downloads\R-to-Stata\Stata_Data\students.dta", clear
  
 *We can look at the number of observations, variables, and data type 
 *using this command:
@@ -632,6 +638,15 @@ use blackturnout.dta, clear
 *if adding the new variables from model to model
 *significantly increases the variance explained 
 *in the dependent variable by the independent variable.
+*This is similar to:
+
+*R COMMANDS*
+
+*#reg.2<-lm(turnout ~ candidate, data = blackturnout)#*
+
+*#reg.3<-lm(turnout ~ candidate + CVAP, data = blackturnout)#*
+
+*#anova(reg.2, reg.3)#*
 
 nestreg: reg turnout (candidate) (cvap)
 
@@ -665,8 +680,8 @@ est tab model1 model2 model3, star
 
 *#BIC(reg.2)-BIC(reg.3)#*
 
-*We can compare models with F-tests and inspect BIC in Stata
-*also
+*We can compare models with Linear Hypothesis tests and 
+*inspect BIC in Stata also
 
 quietly reg turnout candidate cvap
 
@@ -710,11 +725,12 @@ estat ic
 *However, Stata packages are less available and, consequently, 
 *they are used a bit less. The nice thing about Stata 
 *packages is they don't need to be loaded with a
-*command like library(); they're always ready to use. To
-*do something similar to the above R command in Stata:
+*command like library(); they're always ready to use
+*after being installed. To do something similar to the 
+*above R command in Stata:
 
-*ssc install overfit (remove '*' at beginning to run command
-*and install package and remove this message)
+*ssc install overfit (remove '*' at beginning and 
+*remove this message to run command and install package)
 
 overfit: reg turnout candidate
 

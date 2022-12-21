@@ -9,8 +9,19 @@ rm(list=ls())
 #clear matrix
 
 ###
+my_log <- file("C:/Users/dsimb/Downloads/R-to-Stata/Stata_Practice/Stata-to-R.txt") # File name of output log
+
+sink(my_log, append = TRUE, type = "output") # Writing console output to log file
+sink(my_log, append = TRUE, type = "message")
+
+cat(readChar(rstudioapi::getSourceEditorContext()$path, # Writing currently opened R script to file
+             file.info(rstudioapi::getSourceEditorContext()$path)$size))
+
+1:10 + 1:5   # Some R code returning warnings
+x <- "my string" # Some data objects
+x
 #set working directory
-setwd("C:/Users/diego/Dropbox/DLeal/Arizona/teaching/DATA")
+setwd("C:/Users/dsimb/Downloads/R-to-Stata/R_Data")
 
 #Stata Command:
 ###
@@ -18,11 +29,11 @@ setwd("C:/Users/diego/Dropbox/DLeal/Arizona/teaching/DATA")
 #cd "C:\Users\dsimb\Downloads\R-to-Stata\Stata_Data"
 
 ###
-library("car")       #used to recode variables efficiently
-library("MASS")      #used to compute studentized  residuals
-library("caret")     #used to assess overfitting
-library("skedastic") #used to assess homoskedasticity
-library("lmtest")    #used to assess/test for functional form
+#library("car")       #used to recode variables efficiently
+#library("MASS")      #used to compute studentized  residuals
+#library("caret")     #used to assess overfitting
+#library("skedastic") #used to assess homoskedasticity
+#library("lmtest")    #used to assess/test for functional form
 
 
 ##################
@@ -637,3 +648,4 @@ reg.4<-lm(turnout ~ candidate + CVAP + interact, data = blackturnout)
 ###
 
 #Stata .do file also overviews the margins command in Stata
+closeAllConnections()

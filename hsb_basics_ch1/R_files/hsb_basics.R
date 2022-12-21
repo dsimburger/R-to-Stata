@@ -1,5 +1,18 @@
+my_log <- file("C:/Users/dsimb/Downloads/R-to-Stata/hsb_basics_ch1/R_files/hsb_basics_ch1.txt") # File name of output log
+
+sink(my_log, append = TRUE, type = "output") # Writing console output to log file
+sink(my_log, append = TRUE, type = "message")
+
+cat(readChar(rstudioapi::getSourceEditorContext()$path, # Writing currently opened R script to file
+             file.info(rstudioapi::getSourceEditorContext()$path)$size))
+
+1:10 + 1:5   # Some R code returning warnings
+x <- "my string" # Some data objects
+x
 #input the data
+
 #use hsb.dta
+
 #We can get the hsb dataset from the 'merTools' package
 #install.packages("merTools")
 
@@ -98,6 +111,7 @@ plot(hsb$ses, hsb$mathach,
 abline(lm(mathach ~ ses, data = hsb))
 
 #create dummy variables for the remaining cases 
+
 #gen s1=0;  replace s1=1 if schoolid==1224
 #gen s2=0;  replace s2=1 if schoolid==1288
 #gen s3=0;  replace s3=1 if schoolid==1296
@@ -106,7 +120,9 @@ abline(lm(mathach ~ ses, data = hsb))
 
 #We'll use the 'dplyr' package and it's case_when function to make 
 #dummy variables
+
 #install.packages("dplyr")
+
 library(dplyr)
 
 hsb$s1 <- case_when(hsb$schid == 1224 ~ 1, 
@@ -189,3 +205,4 @@ library(lmtest)
 #The model with MORE variables in it goes first
 
 lrtest(r1, r2)
+closeAllConnections()
