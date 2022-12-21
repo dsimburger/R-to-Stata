@@ -1,0 +1,4874 @@
+----------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\dsimb\Downloads\R-
+> to-Stata\Stata_Practice\R-to-Stata.txt
+  log type:  text
+ opened on:  21 Dec 2022, 16:09:26
+
+. 
+. *R uses several packages to simplify t
+> he coding process for several
+. *statistical procedures.
+. 
+. *library("car")       #used to recode 
+> variables efficiently
+. *library("MASS")      #used to compute
+>  studentized  residuals
+. *library("caret")     #used to assess 
+> overfitting
+. *library("skedastic") #used to assess 
+> homoskedasticity
+. *library("lmtest")    #used to assess/
+> test for functional form
+. 
+. *In Stata, all of these simplified pro
+> cesses are already built in.
+. 
+. *With a working directory set, we can 
+> load data into Stata like so.
+. *All Stata data files have the extensi
+> on .dta. Running clear at 
+. *the end tells R to clear out its curr
+> ent data to load the new set. 
+. *This is similar to the R commands:
+. 
+. *#student.set <-read.csv("students.csv
+> ", stringsAsFactors = FALSE)#*
+. 
+. *#lapop<-read.csv("Lapop_extra.csv", n
+> a.strings = c("NA",".a",".b",".c"), st
+> ringsAsFactors = F)#*
+. 
+. *#firearms<-read.csv("firearms.csv", s
+> tringsAsFactors = F)#*
+. 
+. *#blackturnout<-read.csv("blackturnout
+> .csv")#*
+. 
+. use blackturnout.dta, clear
+
+. 
+. use firearms.dta, clear
+
+. 
+. use Lapop_extra.dta, clear
+
+. 
+. use students.dta, clear
+
+. 
+. *Alternatively, we can also feed Stata
+>  the file path and skip setting
+. *a working directory:
+. 
+. use "C:\Users\dsimb\Downloads\R-to-Sta
+> ta\Stata_Data\blackturnout.dta", clear
+
+. 
+. use "C:\Users\dsimb\Downloads\R-to-Sta
+> ta\Stata_Data\firearms.dta", clear
+
+. 
+. use "C:\Users\dsimb\Downloads\R-to-Sta
+> ta\Stata_Data\Lapop_extra.dta", clear
+
+. 
+. use "C:\Users\dsimb\Downloads\R-to-Sta
+> ta\Stata_Data\students.dta", clear
+
+.  
+. *We can look at the number of observat
+> ions, variables, and data type 
+. *using this command:
+. 
+. describe
+
+Contains data from C:\Users\dsimb\Downlo
+> ads\R-to-Stata\Stata_Data\students.dta
+  obs:            60                    
+>       
+ vars:            18                    
+>       20 Dec 2022 10:20
+ size:         1,860                    
+>       
+----------------------------------------
+              storage   display    value
+variable name   type    format     label
+>       variable label
+----------------------------------------
+subject         byte    %8.0g           
+                    >       
+sex             byte    %8.0g           
+                    >       
+age             byte    %8.0g           
+                    >       
+hsgpa           float   %9.0g           
+                    >       
+cogpa           float   %9.0g           
+                    >       
+dhome           int     %8.0g           
+                    >       
+dres            float   %9.0g           
+                    >       
+tv              float   %9.0g           
+                    >       
+sport           byte    %8.0g           
+                    >       
+news            byte    %8.0g           
+                    >       
+aids            byte    %8.0g           
+                    >       
+veg             byte    %8.0g           
+                    >       
+affil           byte    %8.0g           
+                    >       
+ideol           byte    %8.0g           
+                    >       
+relig           byte    %8.0g           
+                    >       
+abor            byte    %8.0g           
+                    >       
+affirm          byte    %8.0g           
+                    >       
+life            byte    %8.0g           
+                    >       
+----------------------------------------
+Sorted by: 
+
+. 
+. *DESCRIPTIVE STATISTICS AND PRELIMINAR
+> Y ANALYSIS*
+. *We can get descriptive statistics usi
+> ng the su command. The sep(0)
+. *at the end tells Stata to not put a l
+> ine separator between every
+. *3 variables (makes things look nicer)
+> . This is similar to using
+. *summarize() in R on a data set/variab
+> le:
+. 
+. *for all variables:
+. 
+. su, sep(0)
+
+    Variable |        Obs        Mean   
+>  Std. Dev.       Min        Max
+-------------+--------------------------
+> -------------------------------
+     subject |         60        30.5   
+>  17.46425          1         60
+         sex |         60    .5166667   
+>  .5039393          0          1
+         age |         60    29.16667   
+>  8.475621         22         71
+       hsgpa |         60    3.308333   
+>  .4596578          2          4
+       cogpa |         60    3.453333   
+>   .351494        2.6          4
+       dhome |         60      1232.2   
+>  1681.748          0       8000
+        dres |         60    3.818333   
+>  4.117902         .2         20
+          tv |         60    7.266667   
+>  6.717336          0         37
+       sport |         60    5.483333   
+>  3.872947          0         16
+        news |         60    4.083333   
+>  3.004469          0         14
+        aids |         60    1.433333   
+>    2.4312          0         11
+         veg |         60         .15   
+>  .3600847          0          1
+       affil |         60        2.05   
+>   .871877          1          3
+       ideol |         60    3.033333   
+>  1.636104          1          7
+       relig |         60    1.166667   
+>  .9771398          0          3
+        abor |         60    .7833333   
+>  .4154502          0          1
+      affirm |         60    .7166667   
+>  .4544196          0          1
+        life |         60        1.75   
+>  .8561839          1          3
+
+. 
+. *an alternative of su is sum:
+. 
+. sum, sep(0)
+
+    Variable |        Obs        Mean   
+>  Std. Dev.       Min        Max
+-------------+--------------------------
+> -------------------------------
+     subject |         60        30.5   
+>  17.46425          1         60
+         sex |         60    .5166667   
+>  .5039393          0          1
+         age |         60    29.16667   
+>  8.475621         22         71
+       hsgpa |         60    3.308333   
+>  .4596578          2          4
+       cogpa |         60    3.453333   
+>   .351494        2.6          4
+       dhome |         60      1232.2   
+>  1681.748          0       8000
+        dres |         60    3.818333   
+>  4.117902         .2         20
+          tv |         60    7.266667   
+>  6.717336          0         37
+       sport |         60    5.483333   
+>  3.872947          0         16
+        news |         60    4.083333   
+>  3.004469          0         14
+        aids |         60    1.433333   
+>    2.4312          0         11
+         veg |         60         .15   
+>  .3600847          0          1
+       affil |         60        2.05   
+>   .871877          1          3
+       ideol |         60    3.033333   
+>  1.636104          1          7
+       relig |         60    1.166667   
+>  .9771398          0          3
+        abor |         60    .7833333   
+>  .4154502          0          1
+      affirm |         60    .7166667   
+>  .4544196          0          1
+        life |         60        1.75   
+>  .8561839          1          3
+
+. 
+. *for specific variables:
+. 
+. su age hsgpa cogpa, sep(0)
+
+    Variable |        Obs        Mean   
+>  Std. Dev.       Min        Max
+-------------+--------------------------
+> -------------------------------
+         age |         60    29.16667   
+>  8.475621         22         71
+       hsgpa |         60    3.308333   
+>  .4596578          2          4
+       cogpa |         60    3.453333   
+>   .351494        2.6          4
+
+. 
+. *for descriptives of a specfific group
+> :
+. 
+. su age hsgpa cogpa if affil == 1, sep(
+> 0)
+
+    Variable |        Obs        Mean   
+>  Std. Dev.       Min        Max
+-------------+--------------------------
+> -------------------------------
+         age |         21    29.80952   
+>  7.737048         23         50
+       hsgpa |         21    3.238095   
+>  .4695489          2        3.8
+       cogpa |         21    3.561905   
+>   .324771          3          4
+
+. 
+. su age hsgpa cogpa if affil == 2, sep(
+> 0) 
+
+    Variable |        Obs        Mean   
+>  Std. Dev.       Min        Max
+-------------+--------------------------
+> -------------------------------
+         age |         15    27.66667   
+>  5.205309         23         41
+       hsgpa |         15    3.206667   
+>  .5535169        2.2          4
+       cogpa |         15    3.466667   
+>   .377334        2.6          4
+
+. 
+. *for descriptives of a specific studen
+> t:
+. 
+. su if subject == 7, sep(0)
+
+    Variable |        Obs        Mean   
+>  Std. Dev.       Min        Max
+-------------+--------------------------
+> -------------------------------
+     subject |          1           7   
+>         .          7          7
+         sex |          1           0   
+>         .          0          0
+         age |          1          24   
+>         .         24         24
+       hsgpa |          1         3.6   
+>         .        3.6        3.6
+       cogpa |          1         3.7   
+>         .        3.7        3.7
+       dhome |          1           0   
+>         .          0          0
+        dres |          1          .2   
+>         .         .2         .2
+          tv |          1           5   
+>         .          5          5
+       sport |          1          12   
+>         .         12         12
+        news |          1           4   
+>         .          4          4
+        aids |          1           2   
+>         .          2          2
+         veg |          1           0   
+>         .          0          0
+       affil |          1           3   
+>         .          3          3
+       ideol |          1           2   
+>         .          2          2
+       relig |          1           1   
+>         .          1          1
+        abor |          1           1   
+>         .          1          1
+      affirm |          1           1   
+>         .          1          1
+        life |          1           1   
+>         .          1          1
+
+. 
+. *The other command we'll use to do pre
+> liminary investigation of the data
+. *is tab. This command puts the frequen
+> cies of variable categories into
+. *a table. This is similar to passing a
+>  variable through table() in R:
+. 
+. *a single table:
+. 
+. tab sex
+
+        sex |      Freq.     Percent    
+>     Cum.
+------------+---------------------------
+> --------
+          0 |         29       48.33    
+>    48.33
+          1 |         31       51.67    
+>   100.00
+------------+---------------------------
+> --------
+      Total |         60      100.00
+
+. 
+. *a single table for a specific group:
+. 
+. tab sex if cogpa > 3.0
+
+        sex |      Freq.     Percent    
+>     Cum.
+------------+---------------------------
+> --------
+          0 |         23       48.94    
+>    48.94
+          1 |         24       51.06    
+>   100.00
+------------+---------------------------
+> --------
+      Total |         47      100.00
+
+. 
+. tab sex if affil == 2
+
+        sex |      Freq.     Percent    
+>     Cum.
+------------+---------------------------
+> --------
+          0 |          9       60.00    
+>    60.00
+          1 |          6       40.00    
+>   100.00
+------------+---------------------------
+> --------
+      Total |         15      100.00
+
+. 
+. *We can also cross-tabulate two variab
+> les similar to
+. *cross.table() in R:
+. 
+. tab sex affil
+
+           |   affil
+       sex |         1 |     Total
+-----------+-----------+----------
+         0 |         9 |        29 
+         1 |        12 |        31 
+-----------+-----------+----------
+     Total |        21 |        60 
+
+
+           |   affil
+       sex |         2 |     Total
+-----------+-----------+----------
+         0 |         9 |        29 
+         1 |         6 |        31 
+-----------+-----------+----------
+     Total |        15 |        60 
+
+
+           |   affil
+       sex |         3 |     Total
+-----------+-----------+----------
+         0 |        11 |        29 
+         1 |        13 |        31 
+-----------+-----------+----------
+     Total |        24 |        60 
+
+. 
+. *if we want to tab multiple single-var
+> iable tables at the same time, 
+. *we can use tab1:
+. 
+. tab1 age hsgpa cogpa
+
+-> tabulation of age  
+
+        age |      Freq.     Percent    
+>     Cum.
+------------+---------------------------
+> --------
+         22 |          3        5.00    
+>     5.00
+         23 |         10       16.67    
+>    21.67
+         24 |          7       11.67    
+>    33.33
+         25 |          2        3.33    
+>    36.67
+         26 |          8       13.33    
+>    50.00
+         27 |          5        8.33    
+>    58.33
+         28 |          5        8.33    
+>    66.67
+         29 |          1        1.67    
+>    68.33
+         30 |          1        1.67    
+>    70.00
+         31 |          4        6.67    
+>    76.67
+         32 |          3        5.00    
+>    81.67
+         33 |          1        1.67    
+>    83.33
+         34 |          1        1.67    
+>    85.00
+         35 |          1        1.67    
+>    86.67
+         36 |          1        1.67    
+>    88.33
+         39 |          1        1.67    
+>    90.00
+         41 |          2        3.33    
+>    93.33
+         44 |          1        1.67    
+>    95.00
+         50 |          2        3.33    
+>    98.33
+         71 |          1        1.67    
+>   100.00
+------------+---------------------------
+> --------
+      Total |         60      100.00
+
+-> tabulation of hsgpa  
+
+      hsgpa |      Freq.     Percent    
+>     Cum.
+------------+---------------------------
+> --------
+          2 |          1        1.67    
+>     1.67
+        2.1 |          1        1.67    
+>     3.33
+        2.2 |          1        1.67    
+>     5.00
+        2.3 |          1        1.67    
+>     6.67
+        2.7 |          1        1.67    
+>     8.33
+        2.8 |          1        1.67    
+>    10.00
+          3 |         14       23.33    
+>    33.33
+        3.1 |          1        1.67    
+>    35.00
+        3.2 |          3        5.00    
+>    40.00
+        3.3 |          6       10.00    
+>    50.00
+        3.4 |          5        8.33    
+>    58.33
+        3.5 |          7       11.67    
+>    70.00
+        3.6 |          3        5.00    
+>    75.00
+        3.7 |          4        6.67    
+>    81.67
+        3.8 |          6       10.00    
+>    91.67
+          4 |          5        8.33    
+>   100.00
+------------+---------------------------
+> --------
+      Total |         60      100.00
+
+-> tabulation of cogpa  
+
+      cogpa |      Freq.     Percent    
+>     Cum.
+------------+---------------------------
+> --------
+        2.6 |          1        1.67    
+>     1.67
+        2.8 |          1        1.67    
+>     3.33
+          3 |         11       18.33    
+>    21.67
+        3.1 |          2        3.33    
+>    25.00
+        3.2 |          4        6.67    
+>    31.67
+        3.3 |          3        5.00    
+>    36.67
+        3.4 |          3        5.00    
+>    41.67
+        3.5 |         11       18.33    
+>    60.00
+        3.6 |          3        5.00    
+>    65.00
+        3.7 |          6       10.00    
+>    75.00
+        3.8 |          7       11.67    
+>    86.67
+        3.9 |          4        6.67    
+>    93.33
+          4 |          4        6.67    
+>   100.00
+------------+---------------------------
+> --------
+      Total |         60      100.00
+
+. 
+. *Give descriptives of another variable
+>  based off of the tabulated
+. *variable's categories:
+. 
+. tab1 age hsgpa cogpa, summarize(sex)
+
+-> tabulation of age  
+
+            |           Summary of sex
+        age |        Mean   Std. Dev.   
+>     Freq.
+------------+---------------------------
+> ---------
+         22 |           1           0   
+>         3
+         23 |          .4   .51639778   
+>        10
+         24 |   .42857143   .53452248   
+>         7
+         25 |           1           0   
+>         2
+         26 |        .375   .51754917   
+>         8
+         27 |           1           0   
+>         5
+         28 |          .4   .54772256   
+>         5
+         29 |           1           0   
+>         1
+         30 |           0           0   
+>         1
+         31 |          .5   .57735027   
+>         4
+         32 |   .33333333   .57735027   
+>         3
+         33 |           0           0   
+>         1
+         34 |           0           0   
+>         1
+         35 |           1           0   
+>         1
+         36 |           0           0   
+>         1
+         39 |           0           0   
+>         1
+         41 |           1           0   
+>         2
+         44 |           1           0   
+>         1
+         50 |          .5   .70710678   
+>         2
+         71 |           0           0   
+>         1
+------------+---------------------------
+> ---------
+      Total |   .51666667   .50393928   
+>        60
+
+-> tabulation of hsgpa  
+
+            |           Summary of sex
+      hsgpa |        Mean   Std. Dev.   
+>     Freq.
+------------+---------------------------
+> ---------
+          2 |           0           0   
+>         1
+        2.1 |           1           0   
+>         1
+        2.2 |           0           0   
+>         1
+        2.3 |           0           0   
+>         1
+        2.7 |           0           0   
+>         1
+        2.8 |           0           0   
+>         1
+          3 |   .71428571   .46880723   
+>        14
+        3.1 |           0           0   
+>         1
+        3.2 |   .33333333   .57735027   
+>         3
+        3.3 |   .33333333   .51639778   
+>         6
+        3.4 |          .4   .54772256   
+>         5
+        3.5 |   .71428571   .48795004   
+>         7
+        3.6 |   .33333333   .57735027   
+>         3
+        3.7 |         .75          .5   
+>         4
+        3.8 |          .5   .54772256   
+>         6
+          4 |          .6   .54772256   
+>         5
+------------+---------------------------
+> ---------
+      Total |   .51666667   .50393928   
+>        60
+
+-> tabulation of cogpa  
+
+            |           Summary of sex
+      cogpa |        Mean   Std. Dev.   
+>     Freq.
+------------+---------------------------
+> ---------
+        2.6 |           0           0   
+>         1
+        2.8 |           1           0   
+>         1
+          3 |   .54545455   .52223297   
+>        11
+        3.1 |           0           0   
+>         2
+        3.2 |          .5   .57735027   
+>         4
+        3.3 |   .66666667   .57735027   
+>         3
+        3.4 |           0           0   
+>         3
+        3.5 |   .27272727   .46709937   
+>        11
+        3.6 |   .33333333   .57735027   
+>         3
+        3.7 |   .66666667   .51639778   
+>         6
+        3.8 |   .57142857   .53452248   
+>         7
+        3.9 |           1           0   
+>         4
+          4 |           1           0   
+>         4
+------------+---------------------------
+> ---------
+      Total |   .51666667   .50393928   
+>        60
+
+. 
+. *We can subset data in Stata as well b
+> ut its an annoying process.
+. *We first need to preserve our data as
+>  is, create our subset using
+. *the keep command, doing our analyses,
+>  and then restoring our data
+. *to its preserved state. This is simil
+> ar to the following R code:
+. 
+. *Create a subset of the data that ONLY
+>  includes students that are vegetarian
+> . 
+. *#vegetarian <-subset(student.set,stud
+> ent.set$veg==1)#*
+. 
+. *How many vegetarians are female?
+. *#sum(vegetarian$sex==1)#*
+. 
+. *What is the mean college GPA of veget
+> arians?
+. *#mean(vegetarian$cogpa)#*
+. 
+. preserve
+
+. 
+. keep if veg == 1
+(51 observations deleted)
+
+. 
+. su sex if sex == 1
+
+    Variable |        Obs        Mean   
+>  Std. Dev.       Min        Max
+-------------+--------------------------
+> -------------------------------
+         sex |          6           1   
+>         0          1          1
+
+. 
+. *OR
+. 
+. tab sex
+
+        sex |      Freq.     Percent    
+>     Cum.
+------------+---------------------------
+> --------
+          0 |          3       33.33    
+>    33.33
+          1 |          6       66.67    
+>   100.00
+------------+---------------------------
+> --------
+      Total |          9      100.00
+
+. 
+. su cogpa
+
+    Variable |        Obs        Mean   
+>  Std. Dev.       Min        Max
+-------------+--------------------------
+> -------------------------------
+       cogpa |          9    3.388889   
+>  .3100179          3        3.8
+
+. 
+. *we can save a copy of our subsetted d
+> ata with the save command:
+. save students_veg.dta, replace
+file students_veg.dta saved
+
+. 
+. restore
+
+. 
+. *We can also look at group differences
+>  in means using tab and,
+. *alternatively, using tabstat (tabulat
+> es statistics of variables).
+. *This is similar to the following R co
+> mmand:
+. 
+. *#tapply(student.set$hsgpa, student.se
+> t$affil, mean, na.rm=TRUE)#*
+. 
+. *Look at the Total column for mean dif
+> ferences with this command:
+. 
+. tab affil hsgpa, summarize(hsgpa) mean
+
+                              Means of h
+> sgpa
+
+           |                       hsgpa
+     affil |         2        2.1       
+>  2.2        2.3        2.7 |     Total
+-----------+----------------------------
+> ---------------------------+----------
+         1 |         2  2.0999999       
+>    .          .          . | 3.2380952
+         2 |         .          .       
+>  2.2        2.3        2.7 | 3.2066666
+         3 |         .          .       
+>    .          .          . | 3.4333333
+-----------+----------------------------
+> ---------------------------+----------
+     Total |         2  2.0999999       
+>  2.2        2.3        2.7 | 3.3083333
+
+           |                       hsgpa
+     affil |       2.8          3       
+>  3.1        3.2        3.3 |     Total
+-----------+----------------------------
+> ---------------------------+----------
+         1 |         .          3       
+>    .          .        3.3 | 3.2380952
+         2 |       2.8          3       
+>    .          .        3.3 | 3.2066666
+         3 |         .          3  3.099
+> 9999        3.2          . | 3.4333333
+-----------+----------------------------
+> ---------------------------+----------
+     Total |       2.8          3  3.099
+> 9999        3.2        3.3 | 3.3083333
+
+           |                       hsgpa
+     affil |       3.4        3.5       
+>  3.6        3.7        3.8 |     Total
+-----------+----------------------------
+> ---------------------------+----------
+         1 | 3.4000001        3.5       
+>    .        3.7        3.8 | 3.2380952
+         2 |         .          .  3.599
+> 9999        3.7        3.8 | 3.2066666
+         3 | 3.4000001        3.5  3.599
+> 9999        3.7        3.8 | 3.4333333
+-----------+----------------------------
+> ---------------------------+----------
+     Total | 3.4000001        3.5  3.599
+> 9999        3.7        3.8 | 3.3083333
+
+           |   hsgpa
+     affil |         4 |     Total
+-----------+-----------+----------
+         1 |         . | 3.2380952
+         2 |         4 | 3.2066666
+         3 |         4 | 3.4333333
+-----------+-----------+----------
+     Total |         4 | 3.3083333
+
+. 
+. *Alternatively, tabstat can do the sam
+> e thing but simplified:
+. 
+. tabstat hsgpa, by(affil) statistics(me
+> an sd)
+
+Summary for variables: hsgpa
+     by categories of: affil 
+
+   affil |      mean        sd
+---------+--------------------
+       1 |  3.238095  .4695489
+       2 |  3.206667  .5535169
+       3 |  3.433333   .369096
+---------+--------------------
+   Total |  3.308333  .4596578
+------------------------------
+
+. 
+. *We can create a distribution of a var
+> iable in Stata using the
+. *histogram command. This is similar to
+>  the R command:
+. 
+. *#barplot(table(student.set$abor),
+.         *main = "Views on Abortion",
+.         *xlab = "Supports Legal Aborti
+> on = 1, 
+.                 *Does not Support Lega
+> l Abortion = 0")#*
+. 
+. *While we can't create a barplot in St
+> ata, we can create a 
+. *histogram of the frequencies of each 
+> variable category:
+. 
+. hist abor, frequency title(Views on Ab
+> ortion) xtitle("Does not Support Legal
+>  Abortion = 0, Supports Legal Abortion
+>  = 1")
+(bin=7, start=0, width=.14285714)
+
+. 
+. *We can make box plots in Stata too si
+> milar to the R command:
+. 
+. *#boxplot(student.set$tv ~ student.set
+> $affirm,
+.         *data = student.set,
+.         *names=c("Doesn't Support Affi
+> rmative Action", "Supports Affirmative
+>  Action"),
+.         *xlab = "Respondent's Support 
+> for Affirmative Action",
+.         *ylab = "Number of Hours Spent
+>  Watching TV",
+.         *main = "Tv by Support of Affi
+> rmative Action")#*
+. 
+. *If a line of code starts getting too 
+> long, we can tell Stata to continue 
+. *that code on the next line by putting
+>  '///' at the end of the first line.
+.  
+. graph box tv, over(affirm) title(TV by
+>  Support of Affirmative Action) ytitle
+> (Hours Spent Watching TV) /// 
+>   subtitle((0 = No Support, 1 = Suppor
+> t))
+
+.  
+. *Stata can also make scatter plots lik
+> e the following R command:
+. 
+. *#plot(student.set$sport,student.set$t
+> v)#*
+. 
+. *IMPORTANT: In R, the variable on the 
+> x-axis goes first followed by the
+. *one on the y-axis. This is the revers
+> e for Stata, the variable on the 
+. *y-axis goes first followed by the one
+>  on this x-axis.
+. 
+. scatter tv sport 
+
+. 
+. *We can calculate correlations in Stat
+> a like the following R command:
+. 
+. *#cor(student.set$sport,student.set$tv
+> ,use = "complete.obs")#*
+. 
+. corr tv sport
+(obs=60)
+
+             |       tv    sport
+-------------+------------------
+          tv |   1.0000
+       sport |   0.0513   1.0000
+
+
+. 
+. *Doing corr only will give the entire 
+> correlation matrix:
+. 
+. corr
+(obs=60)
+
+             |  subject      sex
+-------------+------------------
+     subject |   1.0000
+         sex |   0.1396   1.0000
+         age |  -0.1663  -0.0840
+       hsgpa |   0.0689   0.1274
+       cogpa |   0.2051   0.2341
+       dhome |  -0.1312  -0.0071
+        dres |  -0.0062   0.2093
+          tv |   0.1159   0.1113
+       sport |  -0.0440  -0.2864
+        news |   0.0606  -0.1073
+        aids |  -0.1114   0.0908
+         veg |  -0.3059   0.1261
+       affil |  -0.0718  -0.0212
+       ideol |   0.2426  -0.1651
+       relig |   0.1261   0.0631
+        abor |  -0.0572   0.1390
+      affirm |  -0.0267   0.2800
+        life |  -0.0062  -0.0884
+
+             |      age    hsgpa
+-------------+------------------
+         age |   1.0000
+       hsgpa |   0.2524   1.0000
+       cogpa |   0.0522   0.2783
+       dhome |   0.1716   0.0233
+        dres |   0.1179   0.1216
+          tv |  -0.1470  -0.2675
+       sport |   0.1225  -0.1442
+        news |  -0.0105   0.1504
+        aids |   0.3213   0.0589
+         veg |   0.0250  -0.0794
+       affil |  -0.0103   0.1893
+       ideol |  -0.1275  -0.0860
+       relig |  -0.0484  -0.0107
+        abor |  -0.0088  -0.0348
+      affirm |  -0.2692  -0.1021
+        life |   0.0152  -0.0162
+
+             |    cogpa    dhome
+-------------+------------------
+       cogpa |   1.0000
+       dhome |  -0.0048   1.0000
+        dres |   0.1808   0.0478
+          tv |  -0.0173  -0.0861
+       sport |  -0.1911  -0.0713
+        news |   0.0567   0.0179
+        aids |   0.1034  -0.0955
+         veg |  -0.0777  -0.1122
+       affil |  -0.2633   0.2541
+       ideol |  -0.1122  -0.0481
+       relig |  -0.2336  -0.1501
+        abor |   0.0805   0.1373
+      affirm |  -0.1054   0.1333
+        life |  -0.0338   0.0251
+
+             |     dres       tv
+-------------+------------------
+        dres |   1.0000
+          tv |   0.2071   1.0000
+       sport |  -0.1070   0.0513
+        news |   0.1471   0.1639
+        aids |   0.1351  -0.0913
+         veg |   0.0793   0.1163
+       affil |   0.1758  -0.1485
+       ideol |   0.1081   0.0192
+       relig |   0.0700  -0.0469
+        abor |  -0.1175   0.1911
+      affirm |  -0.3101  -0.0442
+        life |  -0.2400   0.0368
+
+             |    sport     news
+-------------+------------------
+       sport |   1.0000
+        news |   0.1669   1.0000
+        aids |   0.2114   0.0159
+         veg |  -0.1622   0.0039
+       affil |   0.0078  -0.1051
+       ideol |   0.0482  -0.0661
+       relig |   0.0231  -0.1607
+        abor |  -0.0708   0.2999
+      affirm |  -0.0653   0.1045
+        life |  -0.2134   0.1334
+
+             |     aids      veg
+-------------+------------------
+        aids |   1.0000
+         veg |   0.0794   1.0000
+       affil |  -0.0824  -0.1323
+       ideol |  -0.1997  -0.2100
+       relig |  -0.0309   0.0723
+        abor |   0.0274   0.1076
+      affirm |  -0.0557   0.2641
+        life |  -0.1262   0.0137
+
+             |    affil    ideol
+-------------+------------------
+       affil |   1.0000
+       ideol |   0.1414   1.0000
+       relig |   0.0895   0.5796
+        abor |  -0.0632  -0.5378
+      affirm |  -0.1348  -0.4202
+        life |  -0.3235  -0.3327
+
+             |    relig     abor
+-------------+------------------
+       relig |   1.0000
+        abor |  -0.4941   1.0000
+      affirm |  -0.2354   0.2978
+        life |  -0.3545   0.4169
+
+             |   affirm     life
+-------------+------------------
+      affirm |   1.0000
+        life |   0.2069   1.0000
+
+
+. 
+. *we can use pwcorr to see which correl
+> ations are statistically significant 
+. *similar to the R command:
+. 
+. *#cor.test(student.set$sport,student.s
+> et$tv,use = "complete.obs",conf.level=
+> .95)#*
+. 
+. pwcorr, star(0.05)
+
+             |  subject      sex      ag
+> e    hsgpa    cogpa    dhome     dres
+-------------+--------------------------
+> -------------------------------------
+     subject |   1.0000 
+         sex |   0.1396   1.0000 
+         age |  -0.1663  -0.0840   1.000
+> 0 
+       hsgpa |   0.0689   0.1274   0.252
+> 4   1.0000 
+       cogpa |   0.2051   0.2341   0.052
+> 2   0.2783*  1.0000 
+       dhome |  -0.1312  -0.0071   0.171
+> 6   0.0233  -0.0048   1.0000 
+        dres |  -0.0062   0.2093   0.117
+> 9   0.1216   0.1808   0.0478   1.0000 
+          tv |   0.1159   0.1113  -0.147
+> 0  -0.2675* -0.0173  -0.0861   0.2071 
+       sport |  -0.0440  -0.2864*  0.122
+> 5  -0.1442  -0.1911  -0.0713  -0.1070 
+        news |   0.0606  -0.1073  -0.010
+> 5   0.1504   0.0567   0.0179   0.1471 
+        aids |  -0.1114   0.0908   0.321
+> 3*  0.0589   0.1034  -0.0955   0.1351 
+         veg |  -0.3059*  0.1261   0.025
+> 0  -0.0794  -0.0777  -0.1122   0.0793 
+       affil |  -0.0718  -0.0212  -0.010
+> 3   0.1893  -0.2633*  0.2541   0.1758 
+       ideol |   0.2426  -0.1651  -0.127
+> 5  -0.0860  -0.1122  -0.0481   0.1081 
+       relig |   0.1261   0.0631  -0.048
+> 4  -0.0107  -0.2336  -0.1501   0.0700 
+        abor |  -0.0572   0.1390  -0.008
+> 8  -0.0348   0.0805   0.1373  -0.1175 
+      affirm |  -0.0267   0.2800* -0.269
+> 2* -0.1021  -0.1054   0.1333  -0.3101*
+        life |  -0.0062  -0.0884   0.015
+> 2  -0.0162  -0.0338   0.0251  -0.2400 
+
+             |       tv    sport     new
+> s     aids      veg    affil    ideol
+-------------+--------------------------
+> -------------------------------------
+          tv |   1.0000 
+       sport |   0.0513   1.0000 
+        news |   0.1639   0.1669   1.000
+> 0 
+        aids |  -0.0913   0.2114   0.015
+> 9   1.0000 
+         veg |   0.1163  -0.1622   0.003
+> 9   0.0794   1.0000 
+       affil |  -0.1485   0.0078  -0.105
+> 1  -0.0824  -0.1323   1.0000 
+       ideol |   0.0192   0.0482  -0.066
+> 1  -0.1997  -0.2100   0.1414   1.0000 
+       relig |  -0.0469   0.0231  -0.160
+> 7  -0.0309   0.0723   0.0895   0.5796*
+        abor |   0.1911  -0.0708   0.299
+> 9*  0.0274   0.1076  -0.0632  -0.5378*
+      affirm |  -0.0442  -0.0653   0.104
+> 5  -0.0557   0.2641* -0.1348  -0.4202*
+        life |   0.0368  -0.2134   0.133
+> 4  -0.1262   0.0137  -0.3235* -0.3327*
+
+             |    relig     abor   affir
+> m     life
+-------------+--------------------------
+> ----------
+       relig |   1.0000 
+        abor |  -0.4941*  1.0000 
+      affirm |  -0.2354   0.2978*  1.000
+> 0 
+        life |  -0.3545*  0.4169*  0.206
+> 9   1.0000 
+
+. 
+. *There are some things R can do very s
+> imply that Stata can't. For example, 
+. *Stata doesn't have easily understanda
+> ble/basic commands to create data fram
+> es 
+. *like R with commands like this one:
+. 
+. *#my.data.frame <-list(continuous = se
+> q(from=1.1,to=7.7,by=1.1),
+.                      *nominal = c("hel
+> lo","goodbye"),
+.                      *binary = c(TRUE,
+> FALSE,FALSE,TRUE))#*
+. 
+. *We can't do things like randomly samp
+> le a distribution of numbers or
+. *things like dice roll simulations lik
+> e the following R commands:
+. 
+. *#dice <-c(1,2,3,4,5,6)#*
+. *#dice.rolling <- sample(dice,size = 5
+> 6789,replace = TRUE)#*
+. *#barplot(table(dice.rolling))#*
+. 
+. *We could do visulatization and analys
+> is of dice roll simulations, 
+. *but we would need a .dta file of rand
+> omly sampled numbers between 1-6 
+. *to produce our graphs and analyses. S
+> tata doesn't excel at creating
+. *the necessary randomly sampled data l
+> ike R does to do things like
+. *this.
+. 
+. *Simulating sampling distributions is 
+> also something we wouldn't be 
+. *able to do well in Stata as Stata doe
+> s not handle sampling with replacement
+>  
+. *very well. This refers to the followi
+> ng R commands:
+. 
+. *#hsgpa.samp.dist <-c()
+. 
+. *for (i in 1:10000) 
+. *{
+.   *samp<-sample(student.set$hsgpa,size
+>  = 45,replace = TRUE)
+.   *hsgpa.samp.dist[i]<-mean(samp)
+. *}
+. *mean(hsgpa.samp.dist) 
+. *sd(hsgpa.samp.dist) 
+. 
+. *(hsgpa.samp.dist[2999] - mean(hsgpa.s
+> amp.dist)) /sd(hsgpa.samp.dist) 
+. 
+. *range(hsgpa.samp.dist) 
+. 
+. *median(hsgpa.samp.dist)
+. 
+. *quantile(hsgpa.samp.dist,0.5)
+. 
+. *quantile(hsgpa.samp.dist,0.93)#*
+. 
+. *We can do for loops in Stata, but the
+> y're generally
+. *used for re-coding sets of similar va
+> riables (e.g., coding
+. *a large set of dummy variables).
+. 
+. *RECODING*
+. *Recoding variables is slightly differ
+> ent in Stata v. R
+. *but still very effective. The followi
+> ng R commands will 
+. *have their Stata equivalent ones unde
+> rneath of them.
+. 
+. use Lapop_extra.dta, clear
+
+. 
+. *R COMMAND*
+. 
+. *#lapop$satisfied<-car::recode(lapop$l
+> s4, "1 = 'Very Satisfied'; 
+. *2 = 'Somewhat Satisfied';3 = 'Somewha
+> t Dissatisfied'; 4 = 'Very Dissatisfie
+> d'")#*
+. 
+. *make a new variable called 'satisfied
+> ' identical to 'ls4'
+. 
+. gen satisfied = ls4
+(61 missing values generated)
+
+. 
+. *define labels for each variable categ
+> ory of ls4
+. 
+. label define satis 1 "Very Satisfied" 
+> 2 "Somewhat Satisfied" ///
+> 3 "Somewhat Dissatisfied" 4 "Very Diss
+> atisfied"
+
+. 
+. *apply the labels to the newly created
+>  variable 'satisfaction'
+. 
+. label val satisfied satis
+
+. 
+. *cross-tab the two variables to make s
+> ure nothing went wrong.
+. 
+. tab satisfied ls4
+
+                      |    ls4
+            satisfied |         1 |     
+> Total
+----------------------+-----------+-----
+> -----
+       Very Satisfied |     3,699 |     
+> 3,699 
+   Somewhat Satisfied |         0 |     
+> 4,962 
+Somewhat Dissatisfied |         0 |     
+> 1,403 
+    Very Dissatisfied |         0 |     
+>   381 
+----------------------+-----------+-----
+> -----
+                Total |     3,699 |    1
+> 0,445 
+
+
+                      |    ls4
+            satisfied |         2 |     
+> Total
+----------------------+-----------+-----
+> -----
+       Very Satisfied |         0 |     
+> 3,699 
+   Somewhat Satisfied |     4,962 |     
+> 4,962 
+Somewhat Dissatisfied |         0 |     
+> 1,403 
+    Very Dissatisfied |         0 |     
+>   381 
+----------------------+-----------+-----
+> -----
+                Total |     4,962 |    1
+> 0,445 
+
+
+                      |    ls4
+            satisfied |         3 |     
+> Total
+----------------------+-----------+-----
+> -----
+       Very Satisfied |         0 |     
+> 3,699 
+   Somewhat Satisfied |         0 |     
+> 4,962 
+Somewhat Dissatisfied |     1,403 |     
+> 1,403 
+    Very Dissatisfied |         0 |     
+>   381 
+----------------------+-----------+-----
+> -----
+                Total |     1,403 |    1
+> 0,445 
+
+
+                      |    ls4
+            satisfied |         4 |     
+> Total
+----------------------+-----------+-----
+> -----
+       Very Satisfied |         0 |     
+> 3,699 
+   Somewhat Satisfied |         0 |     
+> 4,962 
+Somewhat Dissatisfied |         0 |     
+> 1,403 
+    Very Dissatisfied |       381 |     
+>   381 
+----------------------+-----------+-----
+> -----
+                Total |       381 |    1
+> 0,445 
+
+. 
+. *R COMMAND*
+. 
+. *#lapop$age<-lapop$q3#*
+. 
+. *make a new variable called 'age' iden
+> tical to 'q3'
+. 
+. gen age = q3
+(19 missing values generated)
+
+. 
+. *R COMMAND*
+. 
+. *lapop$sex<-car::recode(lapop$t1, "1 =
+>  'Male'; 2 = 'Female'")
+. 
+. *make a new variable called 'sex' iden
+> tical to 't1'
+. 
+. gen sex = t1
+
+. 
+. *define labels for each variable categ
+> ory of t1
+. 
+. label define malefemale 1 "Male" 2 "Fe
+> male"
+
+. 
+. *apply labels to new variable 'sex'
+. 
+. label val sex malefemale
+
+. 
+. *cross-tab to make sure nothing went w
+> rong
+. 
+. tab sex t1
+
+           |     t1
+       sex |         1 |     Total
+-----------+-----------+----------
+      Male |     5,189 |     5,189 
+    Female |         0 |     5,317 
+-----------+-----------+----------
+     Total |     5,189 |    10,506 
+
+
+           |     t1
+       sex |         2 |     Total
+-----------+-----------+----------
+      Male |         0 |     5,189 
+    Female |     5,317 |     5,317 
+-----------+-----------+----------
+     Total |     5,317 |    10,506 
+
+. 
+. *R COMMAND*
+. 
+. *#lapop$tv<-car::recode(lapop$s1, "0 =
+>  'No'; 1 = 'Yes'")#*
+. 
+. *new variable
+. 
+. gen tv = s1
+(8 missing values generated)
+
+. 
+. *define labels
+. 
+. label define tvlab 0 "No" 1 "Yes"
+
+. 
+. *apply labels
+. 
+. label val tv tvlab
+
+. 
+. *cross-tab
+. 
+. tab tv s1
+
+           |     s1
+        tv |         0 |     Total
+-----------+-----------+----------
+        No |       791 |       791 
+       Yes |         0 |     9,707 
+-----------+-----------+----------
+     Total |       791 |    10,498 
+
+
+           |     s1
+        tv |         1 |     Total
+-----------+-----------+----------
+        No |         0 |       791 
+       Yes |     9,707 |     9,707 
+-----------+-----------+----------
+     Total |     9,707 |    10,498 
+
+. 
+. *R COMMAND*
+. 
+. *#lapop$satisfied_binary<-car::recode(
+> lapop$ls4, "1:2 = 1; 3:4 = 0")#*
+. 
+. *make a new variable called satis_dumm
+> y and sort all values
+. *of 'ls4' less than 3 into the "1" cat
+> egory and put everything 
+. *else into the 0 category.
+. 
+. gen satis_dummy = ls4 < 3
+
+. 
+. *cross-tab to check if we're all good
+. 
+. tab satis_dummy ls4
+
+satis_dumm |    ls4
+         y |         1 |     Total
+-----------+-----------+----------
+         0 |         0 |     1,784 
+         1 |     3,699 |     8,661 
+-----------+-----------+----------
+     Total |     3,699 |    10,445 
+
+
+satis_dumm |    ls4
+         y |         2 |     Total
+-----------+-----------+----------
+         0 |         0 |     1,784 
+         1 |     4,962 |     8,661 
+-----------+-----------+----------
+     Total |     4,962 |    10,445 
+
+
+satis_dumm |    ls4
+         y |         3 |     Total
+-----------+-----------+----------
+         0 |     1,403 |     1,784 
+         1 |         0 |     8,661 
+-----------+-----------+----------
+     Total |     1,403 |    10,445 
+
+
+satis_dumm |    ls4
+         y |         4 |     Total
+-----------+-----------+----------
+         0 |       381 |     1,784 
+         1 |         0 |     8,661 
+-----------+-----------+----------
+     Total |       381 |    10,445 
+
+. 
+. *putting ', m' at the end of the tab c
+> ommand will also
+. *show missing values. Looks like we've
+>  sorted missing
+. *values into the "0" category. Let's f
+> ix that.
+. 
+. tab satis_dummy ls4, m
+
+satis_dumm |    ls4
+         y |         1 |     Total
+-----------+-----------+----------
+         0 |         0 |     1,845 
+         1 |     3,699 |     8,661 
+-----------+-----------+----------
+     Total |     3,699 |    10,506 
+
+
+satis_dumm |    ls4
+         y |         2 |     Total
+-----------+-----------+----------
+         0 |         0 |     1,845 
+         1 |     4,962 |     8,661 
+-----------+-----------+----------
+     Total |     4,962 |    10,506 
+
+
+satis_dumm |    ls4
+         y |         3 |     Total
+-----------+-----------+----------
+         0 |     1,403 |     1,845 
+         1 |         0 |     8,661 
+-----------+-----------+----------
+     Total |     1,403 |    10,506 
+
+
+satis_dumm |    ls4
+         y |         4 |     Total
+-----------+-----------+----------
+         0 |       381 |     1,845 
+         1 |         0 |     8,661 
+-----------+-----------+----------
+     Total |       381 |    10,506 
+
+
+satis_dumm |    ls4
+         y |        .a |     Total
+-----------+-----------+----------
+         0 |        61 |     1,845 
+         1 |         0 |     8,661 
+-----------+-----------+----------
+     Total |        61 |    10,506 
+
+. 
+. *Stata generally recognizes missing va
+> lues as '.' but this data
+. *codes them as '.a'. This command is t
+> elling Stata to recode 
+. *the 0's of 'satis_dummy' to be '.a' i
+> f the variable 'ls4' is also
+. *equal to '.a'.
+. 
+. recode satis_dummy 0 = .a if ls4 == .a
+(satis_dummy: 61 changes made)
+
+. 
+. *Looks like we're all good now.
+. 
+. tab satis_dummy ls4, m
+
+satis_dumm |    ls4
+         y |         1 |     Total
+-----------+-----------+----------
+         0 |         0 |     1,784 
+         1 |     3,699 |     8,661 
+        .a |         0 |        61 
+-----------+-----------+----------
+     Total |     3,699 |    10,506 
+
+
+satis_dumm |    ls4
+         y |         2 |     Total
+-----------+-----------+----------
+         0 |         0 |     1,784 
+         1 |     4,962 |     8,661 
+        .a |         0 |        61 
+-----------+-----------+----------
+     Total |     4,962 |    10,506 
+
+
+satis_dumm |    ls4
+         y |         3 |     Total
+-----------+-----------+----------
+         0 |     1,403 |     1,784 
+         1 |         0 |     8,661 
+        .a |         0 |        61 
+-----------+-----------+----------
+     Total |     1,403 |    10,506 
+
+
+satis_dumm |    ls4
+         y |         4 |     Total
+-----------+-----------+----------
+         0 |       381 |     1,784 
+         1 |         0 |     8,661 
+        .a |         0 |        61 
+-----------+-----------+----------
+     Total |       381 |    10,506 
+
+
+satis_dumm |    ls4
+         y |        .a |     Total
+-----------+-----------+----------
+         0 |         0 |     1,784 
+         1 |         0 |     8,661 
+        .a |        61 |        61 
+-----------+-----------+----------
+     Total |        61 |    10,506 
+
+. 
+. *R COMMAND*
+. 
+. *#lapop$relatives_binary<-car::recode(
+> lapop$q11c, "1:3 = 1; 4 =0")#*
+. 
+. *make a new variable called 'relative_
+> dummy' and sort all observations
+. *of 'q11c' less than 4 into the "1" ca
+> tegory and all other observations
+. *into the "0" category.
+. 
+. gen relative_dummy = q11c < 4
+
+. 
+. *Let's make sure our missing values st
+> ay coded properly
+. 
+. recode relative_dummy 0 = .a if q11c =
+> = .a
+(relative_dummy: 153 changes made)
+
+. 
+. *cross-tab to check for errors
+. 
+. tab relative_dummy q11c, m
+
+relative_d |    q11c
+      ummy |         1 |     Total
+-----------+-----------+----------
+         0 |         0 |     8,108 
+         1 |       401 |     2,245 
+        .a |         0 |       153 
+-----------+-----------+----------
+     Total |       401 |    10,506 
+
+
+relative_d |    q11c
+      ummy |         2 |     Total
+-----------+-----------+----------
+         0 |         0 |     8,108 
+         1 |       279 |     2,245 
+        .a |         0 |       153 
+-----------+-----------+----------
+     Total |       279 |    10,506 
+
+
+relative_d |    q11c
+      ummy |         3 |     Total
+-----------+-----------+----------
+         0 |         0 |     8,108 
+         1 |     1,565 |     2,245 
+        .a |         0 |       153 
+-----------+-----------+----------
+     Total |     1,565 |    10,506 
+
+
+relative_d |    q11c
+      ummy |         4 |     Total
+-----------+-----------+----------
+         0 |     8,108 |     8,108 
+         1 |         0 |     2,245 
+        .a |         0 |       153 
+-----------+-----------+----------
+     Total |     8,108 |    10,506 
+
+
+relative_d |    q11c
+      ummy |        .a |     Total
+-----------+-----------+----------
+         0 |         0 |     8,108 
+         1 |         0 |     2,245 
+        .a |       153 |       153 
+-----------+-----------+----------
+     Total |       153 |    10,506 
+
+. 
+. *R COMMAND*
+. 
+. *#lapop$country<-car::recode(lapop$c1,
+>  "0 = 'Colombia'; 1 = 'Ecuador';2 = 'B
+> olivia'; 3 = 'Peru'; 4 = 'Venezuela'")
+> #*
+. 
+. gen country = c1
+
+. 
+. label define countries 0 "Colombia" 1 
+> "Ecuador" 2 "Bolivia" 3 "Peru" 4 "Vene
+> zuela"
+
+. 
+. label val country countries
+
+. 
+. tab country c1, m
+
+           |     c1
+   country |         0 |     Total
+-----------+-----------+----------
+  Colombia |     1,503 |     1,503 
+   Ecuador |         0 |     3,000 
+   Bolivia |         0 |     3,003 
+      Peru |         0 |     1,500 
+ Venezuela |         0 |     1,500 
+-----------+-----------+----------
+     Total |     1,503 |    10,506 
+
+
+           |     c1
+   country |         1 |     Total
+-----------+-----------+----------
+  Colombia |         0 |     1,503 
+   Ecuador |     3,000 |     3,000 
+   Bolivia |         0 |     3,003 
+      Peru |         0 |     1,500 
+ Venezuela |         0 |     1,500 
+-----------+-----------+----------
+     Total |     3,000 |    10,506 
+
+
+           |     c1
+   country |         2 |     Total
+-----------+-----------+----------
+  Colombia |         0 |     1,503 
+   Ecuador |         0 |     3,000 
+   Bolivia |     3,003 |     3,003 
+      Peru |         0 |     1,500 
+ Venezuela |         0 |     1,500 
+-----------+-----------+----------
+     Total |     3,003 |    10,506 
+
+
+           |     c1
+   country |         3 |     Total
+-----------+-----------+----------
+  Colombia |         0 |     1,503 
+   Ecuador |         0 |     3,000 
+   Bolivia |         0 |     3,003 
+      Peru |     1,500 |     1,500 
+ Venezuela |         0 |     1,500 
+-----------+-----------+----------
+     Total |     1,500 |    10,506 
+
+
+           |     c1
+   country |         4 |     Total
+-----------+-----------+----------
+  Colombia |         0 |     1,503 
+   Ecuador |         0 |     3,000 
+   Bolivia |         0 |     3,003 
+      Peru |         0 |     1,500 
+ Venezuela |     1,500 |     1,500 
+-----------+-----------+----------
+     Total |     1,500 |    10,506 
+
+. 
+. *R COMMANDS*
+. 
+. *#lapop$country.factor<-factor(lapop$c
+> ountry)#*
+. *#is.factor(lapop$country.factor)#*
+. *#is.factor(lapop$country)#*
+. 
+. *In Stata we can specify  a variable a
+> s factor v. continuous by putting 
+. *'i.' in front of variable names for f
+> actor variables and 'c.' for
+. *continuous variables. In analyses lik
+> e regression, Stata generally
+. *treats all variables as continuous un
+> less otherwise specified.
+. 
+. su country
+
+    Variable |        Obs        Mean   
+>  Std. Dev.       Min        Max
+-------------+--------------------------
+> -------------------------------
+     country |     10,506    1.856653   
+>  1.245501          0          4
+
+. 
+. su i.country
+
+    Variable |        Obs        Mean   
+>  Std. Dev.       Min        Max
+-------------+--------------------------
+> -------------------------------
+     country |
+    Ecuador  |     10,506    .2855511   
+>   .451698          0          1
+    Bolivia  |     10,506    .2858367   
+>  .4518335          0          1
+       Peru  |     10,506    .1427756   
+>  .3498605          0          1
+  Venezuela  |     10,506    .1427756   
+>  .3498605          0          1
+
+. 
+. *Hypothesis tests in Stata are very si
+> milar to how they
+. *are performed in R.
+. 
+. *One-sample t-test
+. *R COMMAND*
+. 
+. *#t.test(lapop$age,mu=45, alternative=
+> "two.sided")#*
+. 
+. ttest age = 45
+
+One-sample t test
+----------------------------------------
+> --------------------------------------
+Variable |     Obs        Mean    Std. E
+> rr.                                   
+>       Std. Dev.                       
+>                   [95% Conf. Interval]
+---------+------------------------------
+> --------------------------------------
+     age |  10,487    37.89473     .1494
+> 95                                    
+>       15.30919                        
+>                   37.60169            
+>                               38.18777
+----------------------------------------
+> --------------------------------------
+    mean = mean(age)                    
+>                           t = -47.5285
+Ho: mean = 45                           
+>          degrees of freedom =    10486
+
+    Ha: mean < 45               Ha: mean
+>  != 45                 Ha: mean > 45
+ Pr(T < t) = 0.0000         Pr(|T| > |t|
+> ) = 0.0000          Pr(T > t) = 1.0000
+
+. 
+. *One sample z-test (proportion test)
+. *R COMMANDs*
+. 
+. *#n.satisfied<-sum(lapop$satisfied_bin
+> ary,na.rm = T)
+. 
+. *prop.test(                 
+.   *x=n.satisfied,
+.   *n=nrow(lapop),
+.   *p=.5,
+.   *conf.level = .95,
+.   *alternative="two.sided")#*
+. 
+. ztest satis_dummy = 0.5
+
+One-sample z test
+----------------------------------------
+> --------------------------------------
+Variable |     Obs        Mean    Std. E
+> rr.                                   
+>       Std. Dev.                       
+>                   [95% Conf. Interval]
+---------+------------------------------
+> --------------------------------------
+satis_~y |  10,445    .8292006    .00978
+> 47                                    
+>              1                        
+>                    .810023            
+>                               .8483782
+----------------------------------------
+> --------------------------------------
+    mean = mean(satis_dummy)            
+>                           z =  33.6446
+Ho: mean = .5                           
+>          
+
+    Ha: mean < .5               Ha: mean
+>  != .5                 Ha: mean > .5
+ Pr(Z < z) = 1.0000         Pr(|Z| > |z|
+> ) = 0.0000          Pr(Z > z) = 0.0000
+
+. 
+. *Two-sample t-test
+. *R COMMAND*
+. 
+. *#t.test(lapop$age ~ lapop$tv, 
+.        *data=lapop,
+.        *conf.level=0.95)#*
+. 
+. ttest age, by(tv)
+
+Two-sample t test with equal variances
+----------------------------------------
+> --------------------------------------
+   Group |     Obs        Mean    Std. E
+> rr.                                   
+>       Std. Dev.                       
+>                   [95% Conf. Interval]
+---------+------------------------------
+> --------------------------------------
+      No |     788    40.77411    .60662
+> 26                                    
+>       17.02871                        
+>                   39.58332            
+>                                41.9649
+     Yes |   9,691    37.65597    .15375
+> 26                                    
+>       15.13585                        
+>                   37.35458            
+>                               37.95736
+---------+------------------------------
+> --------------------------------------
+combined |  10,479    37.89045    .14953
+> 61                                    
+>       15.30756                        
+>                   37.59733            
+>                               38.18357
+---------+------------------------------
+> --------------------------------------
+    diff |            3.118142    .56625
+> 43                                    
+>                   2.008176            
+>                               4.228109
+----------------------------------------
+> --------------------------------------
+    diff = mean(No) - mean(Yes)         
+>                           t =   5.5066
+Ho: diff = 0                            
+>          degrees of freedom =    10477
+
+    Ha: diff < 0                 Ha: dif
+> f != 0                 Ha: diff > 0
+ Pr(T < t) = 1.0000         Pr(|T| > |t|
+> ) = 0.0000          Pr(T > t) = 0.0000
+
+. 
+. *If we think the variances between our
+>  two samples are
+. *unequal:
+. 
+. ttest age, by(tv) unequal
+
+Two-sample t test with unequal variances
+----------------------------------------
+> --------------------------------------
+   Group |     Obs        Mean    Std. E
+> rr.                                   
+>       Std. Dev.                       
+>                   [95% Conf. Interval]
+---------+------------------------------
+> --------------------------------------
+      No |     788    40.77411    .60662
+> 26                                    
+>       17.02871                        
+>                   39.58332            
+>                                41.9649
+     Yes |   9,691    37.65597    .15375
+> 26                                    
+>       15.13585                        
+>                   37.35458            
+>                               37.95736
+---------+------------------------------
+> --------------------------------------
+combined |  10,479    37.89045    .14953
+> 61                                    
+>       15.30756                        
+>                   37.59733            
+>                               38.18357
+---------+------------------------------
+> --------------------------------------
+    diff |            3.118142    .62580
+> 41                                    
+>                    1.88992            
+>                               4.346364
+----------------------------------------
+> --------------------------------------
+    diff = mean(No) - mean(Yes)         
+>                           t =   4.9826
+Ho: diff = 0                     Sattert
+> hwaite's degrees of freedom =  891.063
+
+    Ha: diff < 0                 Ha: dif
+> f != 0                 Ha: diff > 0
+ Pr(T < t) = 1.0000         Pr(|T| > |t|
+> ) = 0.0000          Pr(T > t) = 0.0000
+
+. 
+. *Chi-square test
+. *R COMMANDS*
+. 
+. *#cross.table<-table(lapop$satisfied_b
+> inary,lapop$relatives_binary)
+. 
+. *#chisq.test(cross.table)#*
+. 
+. tab satis_dummy relative_dummy, chi2
+
+           | relative_d
+satis_dumm |    ummy
+         y |         0 |     Total
+-----------+-----------+----------
+         0 |     1,375 |     1,761 
+         1 |     6,690 |     8,532 
+-----------+-----------+----------
+     Total |     8,065 |    10,293 
+
+
+           | relative_d
+satis_dumm |    ummy
+         y |         1 |     Total
+-----------+-----------+----------
+         0 |       386 |     1,761 
+         1 |     1,842 |     8,532 
+-----------+-----------+----------
+     Total |     2,228 |    10,293 
+
+          Pearson chi2(1) =   0.0938   P
+> r = 0.759
+
+. 
+. *REGRESSION*
+. *Stata is very much designed for regre
+> ssion analyses. While R
+. *is more versatile in the type of meth
+> ods it can perform,
+. *Stata excels at all aspects of regres
+> sion analyses.
+. 
+. *R COMMAND*
+. 
+. *#reg.1<-lm(Rate ~ Ownership, data=fir
+> earms)#*
+. 
+. use firearms.dta, clear
+
+. 
+. *To specify an OLS regression we use t
+> he reg command (or regress).
+. *The dependent variable is written aft
+> er reg followed by the
+. *independent variables you want to inc
+> lude. Unlike R, we do not
+. *have to add plus signs between variab
+> les. Doing the reg command
+. *will automatically summarize the resu
+> lts of the regression.
+. 
+. reg rate ownership
+
+      Source |       SS           df    
+>    MS      Number of obs   =        50
+-------------+--------------------------
+> --------   F(1, 48)        =     45.51
+       Model |  408.308002         1  40
+> 8.308002   Prob > F        =    0.0000
+    Residual |  430.692183        48  8.
+> 97275382   R-squared       =    0.4867
+-------------+--------------------------
+> --------   Adj R-squared   =    0.4760
+       Total |  839.000186        49  17
+> .1224528   Root MSE        =    2.9955
+
+----------------------------------------
+> --------------------------------------
+        rate |      Coef.   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+   ownership |   .2132774   .0316165    
+>  6.75                                 
+>         0.000                         
+>                   .1497082            
+>                               .2768466
+       _cons |   4.456224   1.128761    
+>  3.95                                 
+>         0.000                         
+>                   2.186698            
+>                                6.72575
+----------------------------------------
+> --------------------------------------
+
+. 
+. *An alternative way to do the reg comm
+> and is regress.
+. 
+. regress rate ownership
+
+      Source |       SS           df    
+>    MS      Number of obs   =        50
+-------------+--------------------------
+> --------   F(1, 48)        =     45.51
+       Model |  408.308002         1  40
+> 8.308002   Prob > F        =    0.0000
+    Residual |  430.692183        48  8.
+> 97275382   R-squared       =    0.4867
+-------------+--------------------------
+> --------   Adj R-squared   =    0.4760
+       Total |  839.000186        49  17
+> .1224528   Root MSE        =    2.9955
+
+----------------------------------------
+> --------------------------------------
+        rate |      Coef.   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+   ownership |   .2132774   .0316165    
+>  6.75                                 
+>         0.000                         
+>                   .1497082            
+>                               .2768466
+       _cons |   4.456224   1.128761    
+>  3.95                                 
+>         0.000                         
+>                   2.186698            
+>                                6.72575
+----------------------------------------
+> --------------------------------------
+
+. 
+. *If we don't want to have the regressi
+> on bring up the summary
+. *statistics:
+. 
+. quietly reg rate ownership
+
+. 
+. *We can store the results of our regre
+> ssion using the est store
+. *command. 'est store' must come after 
+> the reg command. The only 
+. *thing we put after 'est store' is the
+>  name we want to give the
+. *model.
+. 
+. reg rate ownership
+
+      Source |       SS           df    
+>    MS      Number of obs   =        50
+-------------+--------------------------
+> --------   F(1, 48)        =     45.51
+       Model |  408.308002         1  40
+> 8.308002   Prob > F        =    0.0000
+    Residual |  430.692183        48  8.
+> 97275382   R-squared       =    0.4867
+-------------+--------------------------
+> --------   Adj R-squared   =    0.4760
+       Total |  839.000186        49  17
+> .1224528   Root MSE        =    2.9955
+
+----------------------------------------
+> --------------------------------------
+        rate |      Coef.   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+   ownership |   .2132774   .0316165    
+>  6.75                                 
+>         0.000                         
+>                   .1497082            
+>                               .2768466
+       _cons |   4.456224   1.128761    
+>  3.95                                 
+>         0.000                         
+>                   2.186698            
+>                                6.72575
+----------------------------------------
+> --------------------------------------
+
+. 
+. est store ratemodel
+
+. 
+. *R COMMAND*
+. 
+. *#firearms$resid.1 <- resid(reg.1)#*
+. 
+. *We can also store our residuals in a 
+> variable with the 
+. *predict command. 'predict' must also 
+> come after the reg
+. *command. In the following code, we ar
+> e naming our variable
+. *'resids' with 'resid' after the comma
+>  telling the predict
+. *command to calculate residuals.
+. 
+. reg rate ownership
+
+      Source |       SS           df    
+>    MS      Number of obs   =        50
+-------------+--------------------------
+> --------   F(1, 48)        =     45.51
+       Model |  408.308002         1  40
+> 8.308002   Prob > F        =    0.0000
+    Residual |  430.692183        48  8.
+> 97275382   R-squared       =    0.4867
+-------------+--------------------------
+> --------   Adj R-squared   =    0.4760
+       Total |  839.000186        49  17
+> .1224528   Root MSE        =    2.9955
+
+----------------------------------------
+> --------------------------------------
+        rate |      Coef.   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+   ownership |   .2132774   .0316165    
+>  6.75                                 
+>         0.000                         
+>                   .1497082            
+>                               .2768466
+       _cons |   4.456224   1.128761    
+>  3.95                                 
+>         0.000                         
+>                   2.186698            
+>                                6.72575
+----------------------------------------
+> --------------------------------------
+
+. 
+. predict resids, resid
+
+. 
+. *R COMMAND*
+. 
+. *#firearms$stud.res<-abs(studres(reg.1
+> ))#*
+. 
+. *#hist(firearms$stud.res)#*
+. 
+. *We can also get studentized residuals
+> .
+. 
+. reg rate ownership
+
+      Source |       SS           df    
+>    MS      Number of obs   =        50
+-------------+--------------------------
+> --------   F(1, 48)        =     45.51
+       Model |  408.308002         1  40
+> 8.308002   Prob > F        =    0.0000
+    Residual |  430.692183        48  8.
+> 97275382   R-squared       =    0.4867
+-------------+--------------------------
+> --------   Adj R-squared   =    0.4760
+       Total |  839.000186        49  17
+> .1224528   Root MSE        =    2.9955
+
+----------------------------------------
+> --------------------------------------
+        rate |      Coef.   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+   ownership |   .2132774   .0316165    
+>  6.75                                 
+>         0.000                         
+>                   .1497082            
+>                               .2768466
+       _cons |   4.456224   1.128761    
+>  3.95                                 
+>         0.000                         
+>                   2.186698            
+>                                6.72575
+----------------------------------------
+> --------------------------------------
+
+. 
+. predict sresid, rstudent
+
+. 
+. *putting 'normal' after the comma in t
+> he hist command
+. *will fit a normal curve on top of the
+>  histogram
+. *Stata makes.
+. 
+. hist sresid, normal
+(bin=7, start=-4.67239, width=.93391604)
+
+. 
+. *R COMMANDS*
+. 
+. *plot(firearms$Ownership, firearms$Rat
+> e)
+. *abline(reg.1, col="red")
+. *range.x.1<-range(firearms$Ownership)
+. *conf_interval.1 <- predict(reg.1, new
+> data=data.frame(Ownership=range.x.1), 
+.                            *interval="
+> confidence", level = 0.95)
+. *lines(range.x.1, conf_interval.1[,"lw
+> r"], col="blue", lty=2)
+. *lines(range.x.1, conf_interval.1[,"up
+> r"], col="blue", lty=2)#*
+. 
+. *We can plot our regression line as we
+> ll.
+. 
+. quietly reg rate ownership
+
+. 
+. twoway lfitci rate ownership, stdf || 
+> scatter rate ownership
+
+. 
+. *OR, alternatively:
+. 
+. quietly reg rate ownership
+
+. 
+. *not putting an option after the comma
+>  tells predict to 
+. *calculate predicted values based off 
+> of the model
+. *specified in the previous reg command
+> .
+. 
+. predict yhat
+(option xb assumed; fitted values)
+
+. 
+. twoway (scatter rate ownership, msize(
+> small)) ///
+> (line yhat ownership, lwidth(medthick)
+>  lpatt(solid)), ytitle(Rate) xtitle(Ow
+> nership)
+
+. 
+. *R COMMAND*
+. 
+. *#reg.1.no.out<-subset(firearms, stud.
+> res < 2, select = c("Rate", "Ownership
+> "))#*
+. 
+. *We can also subset data in Stata usin
+> g the keep command.
+. *Remember, we can use preserve to save
+>  our data as it currently
+. *is and then restore to bring the save
+> d version back after
+. *we are done subsetting. You may not n
+> eed to do this all of the 
+. *time, though.
+. 
+. preserve
+
+. 
+. *Keep only these variables.
+. 
+. keep rate ownership sresid
+
+. 
+. *Keep only the observations that have 
+> tudentized residuals 
+. *less than 2.
+. 
+. keep if sresid < 2
+(0 observations deleted)
+
+. 
+. restore
+
+. 
+. *Alternatively, we can accomplish the 
+> exact same thing using the 
+. *drop command except we'll flip our op
+> erations a bit.
+. 
+. *drop the variable state and keep all 
+> others
+. 
+. drop state
+
+. 
+. *drop observations with studentized re
+> siduals greater than 2
+. 
+. drop if sresid > 2
+(0 observations deleted)
+
+. 
+. *We can then run another regression on
+>  our subsetted data to
+. *see if there are any changes.
+. 
+. reg rate ownership
+
+      Source |       SS           df    
+>    MS      Number of obs   =        50
+-------------+--------------------------
+> --------   F(1, 48)        =     45.51
+       Model |  408.308002         1  40
+> 8.308002   Prob > F        =    0.0000
+    Residual |  430.692183        48  8.
+> 97275382   R-squared       =    0.4867
+-------------+--------------------------
+> --------   Adj R-squared   =    0.4760
+       Total |  839.000186        49  17
+> .1224528   Root MSE        =    2.9955
+
+----------------------------------------
+> --------------------------------------
+        rate |      Coef.   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+   ownership |   .2132774   .0316165    
+>  6.75                                 
+>         0.000                         
+>                   .1497082            
+>                               .2768466
+       _cons |   4.456224   1.128761    
+>  3.95                                 
+>         0.000                         
+>                   2.186698            
+>                                6.72575
+----------------------------------------
+> --------------------------------------
+
+. 
+. *R COMMAND*
+. 
+. *#reg.2<-lm(turnout ~ candidate, data 
+> = blackturnout)#*
+. 
+. *#reg.3<-lm(turnout ~ candidate + CVAP
+> , data = blackturnout)#*
+. 
+. *We can run nested regressions in Stat
+> a by putting 'nestreg:'
+. *before the reg command and specifying
+>  the groups of variables
+. *we want to introduce in parantheses.
+. 
+. use blackturnout.dta, clear
+
+. 
+. *Stata will, first, run a regression o
+> n 'turnout' using
+. *only 'candidate' as an independent va
+> riable and, second,
+. *run another regression with 'cvap' in
+> cluded along with
+. *'candidate'. It will then run an F-te
+> st to determine
+. *if adding the new variables from mode
+> l to model
+. *significantly increases the variance 
+> explained 
+. *in the dependent variable by the inde
+> pendent variable.
+. 
+. nestreg: reg turnout (candidate) (cvap
+> )
+
+Block  1: candidate
+
+      Source |       SS           df    
+>    MS      Number of obs   =     1,237
+-------------+--------------------------
+> --------   F(1, 1235)      =     16.92
+       Model |  .495047861         1  .4
+> 95047861   Prob > F        =    0.0000
+    Residual |  36.1260224     1,235   .
+> 02925184   R-squared       =    0.0135
+-------------+--------------------------
+> --------   Adj R-squared   =    0.0127
+       Total |  36.6210703     1,236  .0
+> 29628698   Root MSE        =    .17103
+
+----------------------------------------
+> --------------------------------------
+     turnout |      Coef.   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+   candidate |   .0616401   .0149836    
+>  4.11                                 
+>         0.000                         
+>                    .032244            
+>                               .0910363
+       _cons |   .3938574   .0051828    
+> 75.99                                 
+>         0.000                         
+>                   .3836893            
+>                               .4040254
+----------------------------------------
+> --------------------------------------
+
+Block  2: cvap
+
+      Source |       SS           df    
+>    MS      Number of obs   =     1,237
+-------------+--------------------------
+> --------   F(2, 1234)      =     18.12
+       Model |  1.04471295         2  .5
+> 22356475   Prob > F        =    0.0000
+    Residual |  35.5763574     1,234  .0
+> 28830111   R-squared       =    0.0285
+-------------+--------------------------
+> --------   Adj R-squared   =    0.0270
+       Total |  36.6210703     1,236  .0
+> 29628698   Root MSE        =    .16979
+
+----------------------------------------
+> --------------------------------------
+     turnout |      Coef.   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+   candidate |  -.0073643    .021703    
+> -0.34                                 
+>         0.734                         
+>                  -.0499432            
+>                               .0352145
+        cvap |   .2073919    .047497    
+>  4.37                                 
+>         0.000                         
+>                   .1142082            
+>                               .3005757
+       _cons |   .3752754   .0066772    
+> 56.20                                 
+>         0.000                         
+>                   .3621756            
+>                               .3883753
+----------------------------------------
+> --------------------------------------
+
+
+  +-------------------------------------
+> ------------------------+
+  |       |          Block  Residual    
+>                  Change               
+>                         |
+  | Block |       F     df        df   P
+> r > F                                 
+>             R2                        
+>                   in R2               
+>                         |
+  |-------+-----------------------------
+> ------------------------|
+  |     1 |   16.92      1      1235   0
+> .0000                                 
+>         0.0135                        
+>                                       
+>                         |
+  |     2 |   19.07      1      1234   0
+> .0000                                 
+>         0.0285                        
+>                  0.0150               
+>                         |
+  +-------------------------------------
+> ------------------------+
+
+. 
+. *Another, alternative way of comparing
+>  models to one another
+. *is to store their estimates and use e
+> st tab to compare
+. *the different estimates. We store mod
+> el estimates by putting
+. *"est store 'var modelname'" after a r
+> eg command.
+. 
+. *Run models and store estimates.
+. 
+. reg turnout candidate
+
+      Source |       SS           df    
+>    MS      Number of obs   =     1,237
+-------------+--------------------------
+> --------   F(1, 1235)      =     16.92
+       Model |  .495047861         1  .4
+> 95047861   Prob > F        =    0.0000
+    Residual |  36.1260224     1,235   .
+> 02925184   R-squared       =    0.0135
+-------------+--------------------------
+> --------   Adj R-squared   =    0.0127
+       Total |  36.6210703     1,236  .0
+> 29628698   Root MSE        =    .17103
+
+----------------------------------------
+> --------------------------------------
+     turnout |      Coef.   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+   candidate |   .0616401   .0149836    
+>  4.11                                 
+>         0.000                         
+>                    .032244            
+>                               .0910363
+       _cons |   .3938574   .0051828    
+> 75.99                                 
+>         0.000                         
+>                   .3836893            
+>                               .4040254
+----------------------------------------
+> --------------------------------------
+
+. 
+. est store model1
+
+. 
+. reg turnout candidate cvap
+
+      Source |       SS           df    
+>    MS      Number of obs   =     1,237
+-------------+--------------------------
+> --------   F(2, 1234)      =     18.12
+       Model |  1.04471295         2  .5
+> 22356475   Prob > F        =    0.0000
+    Residual |  35.5763574     1,234  .0
+> 28830111   R-squared       =    0.0285
+-------------+--------------------------
+> --------   Adj R-squared   =    0.0270
+       Total |  36.6210703     1,236  .0
+> 29628698   Root MSE        =    .16979
+
+----------------------------------------
+> --------------------------------------
+     turnout |      Coef.   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+   candidate |  -.0073643    .021703    
+> -0.34                                 
+>         0.734                         
+>                  -.0499432            
+>                               .0352145
+        cvap |   .2073919    .047497    
+>  4.37                                 
+>         0.000                         
+>                   .1142082            
+>                               .3005757
+       _cons |   .3752754   .0066772    
+> 56.20                                 
+>         0.000                         
+>                   .3621756            
+>                               .3883753
+----------------------------------------
+> --------------------------------------
+
+. 
+. est store model2
+
+. 
+. reg turnout candidate cvap year
+
+      Source |       SS           df    
+>    MS      Number of obs   =     1,237
+-------------+--------------------------
+> --------   F(3, 1233)      =     13.39
+       Model |  1.15566069         3  .3
+> 85220232   Prob > F        =    0.0000
+    Residual |  35.4654096     1,233  .0
+> 28763511   R-squared       =    0.0316
+-------------+--------------------------
+> --------   Adj R-squared   =    0.0292
+       Total |  36.6210703     1,236  .0
+> 29628698   Root MSE        =     .1696
+
+----------------------------------------
+> --------------------------------------
+     turnout |      Coef.   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+   candidate |  -.0075166   .0216781    
+> -0.35                                 
+>         0.729                         
+>                  -.0500466            
+>                               .0350134
+        cvap |   .2065058   .0474442    
+>  4.35                                 
+>         0.000                         
+>                   .1134255            
+>                               .2995862
+        year |   .0058152   .0029609    
+>  1.96                                 
+>         0.050                         
+>                   6.21e-06            
+>                               .0116241
+       _cons |  -11.30168   5.945542    
+> -1.90                                 
+>         0.058                         
+>                  -22.96617            
+>                               .3628225
+----------------------------------------
+> --------------------------------------
+
+. 
+. est store model3
+
+. 
+. *Produces a table of the 3 different r
+> egression models and
+. *put stars for varying levels of signi
+> ficance.
+. 
+. est tab model1 model2 model3, star 
+
+------------------------------
+    Variable |    model1      
+-------------+----------------
+   candidate |  .06164014***  
+        cvap |                
+        year |                
+       _cons |  .39385735***  
+------------------------------
+legend: * p<0.05; ** p<0.01; *** p<0.001
+
+
+------------------------------
+    Variable |    model2      
+-------------+----------------
+   candidate | -.00736432     
+        cvap |  .20739194***  
+        year |                
+       _cons |  .37527544***  
+------------------------------
+legend: * p<0.05; ** p<0.01; *** p<0.001
+
+
+------------------------------
+    Variable |    model3      
+-------------+----------------
+   candidate |  -.0075166     
+        cvap |  .20650585***  
+        year |  .00581516*    
+       _cons | -11.301676     
+------------------------------
+legend: * p<0.05; ** p<0.01; *** p<0.001
+
+. 
+. *R COMMANDS*
+. 
+. *#anova(reg.2, reg.3)#*
+. 
+. *#BIC(reg.2)-BIC(reg.3)#*
+. 
+. *We can compare models with F-tests an
+> d inspect BIC in Stata
+. *also
+. 
+. quietly reg turnout candidate cvap
+
+. 
+. *test if the variance added by the cva
+> p coefficient is equal
+. *to 0 (i.e., should we keep it in the 
+> model?).
+. 
+. test cvap = 0
+
+ ( 1)  cvap = 0
+
+       F(  1,  1234) =   19.07
+            Prob > F =    0.0000
+
+. 
+. *test if variance added by both coeffi
+> cients is equal to
+. *0.
+. 
+. test (cvap = 0) (candidate = 0)
+
+ ( 1)  cvap = 0
+ ( 2)  candidate = 0
+
+       F(  2,  1234) =   18.12
+            Prob > F =    0.0000
+
+. 
+. quietly reg turnout candidate
+
+. 
+. *calculate AIC and BIC of the previous
+>  model ran by reg
+. 
+. estat ic
+
+Akaike's information criterion and Bayes
+> ian information criterion
+
+----------------------------------------
+> -------------------------------------
+       Model |        Obs  ll(null)  ll(
+> model)      df         AIC        BIC
+-------------+--------------------------
+> -------------------------------------
+           . |      1,237  421.7821   43
+> 0.2001                                
+>              2                        
+>                  -856.4001            
+>                             -846.1592
+----------------------------------------
+> -------------------------------------
+               Note: N=Obs used in
+                    calculating BIC; see
+                    [R] BIC note.
+
+. 
+. quietly reg turnout candidate cvap
+
+. 
+. *calculate AIC and BIC of the model wi
+> th more variables
+. *added.
+. 
+. estat ic
+
+Akaike's information criterion and Bayes
+> ian information criterion
+
+----------------------------------------
+> -------------------------------------
+       Model |        Obs  ll(null)  ll(
+> model)      df         AIC        BIC
+-------------+--------------------------
+> -------------------------------------
+           . |      1,237  421.7821    4
+> 39.683                                
+>              3                        
+>                   -873.366            
+>                             -858.0047
+----------------------------------------
+> -------------------------------------
+               Note: N=Obs used in
+                    calculating BIC; see
+                    [R] BIC note.
+
+. 
+. *R COMMANDS*
+. 
+. *#over<-trainControl(method="cv", numb
+> er = 5)
+. *overf<-train(turnout ~ candidate + CV
+> AP, data = blackturnout,
+.              *method = "lm",
+.              *trControl = over)
+.                          
+. *#print(overf)#*
+. 
+. *Stata isn't very good with machine le
+> arning techniques
+. *for assessing model diagnostics. The 
+> best way to check
+. *for overfitting is to use AIC and/or 
+> BIC in Stata.
+. *However, alternatively, we can use th
+> e overfit package
+. *to help us out a bit. Stata has packa
+> ges just like R.
+. *However, Stata packages are less avai
+> lable and, consequently, 
+. *they are used a bit less. The nice th
+> ing about Stata 
+. *packages is they don't need to be loa
+> ded with a
+. *command like library(); they're alway
+> s ready to use. To
+. *do something similar to the above R c
+> ommand in Stata:
+. 
+. *ssc install overfit (remove '*' at be
+> ginning to run command
+. *and install package and remove this m
+> essage)
+. 
+. overfit: reg turnout candidate
+
+Iterations
+........................................
+> ..........  50
+........................................
+> .......... 100
+
+
+Shrinkage statistics (expressed in perce
+> nt)
+
+          out-of-sam~s
+estimate         12.35
+      se          4.70
+
+          in-sample ~s
+estimate          0.08
+      se          2.21
+
+           overfitting
+estimate         12.23
+      se          5.19
+
+. 
+. overfit: reg turnout candidate cvap
+
+Iterations
+........................................
+> ..........  50
+........................................
+> .......... 100
+
+
+Shrinkage statistics (expressed in perce
+> nt)
+
+          out-of-sam~s
+estimate          8.90
+      se          2.54
+
+          in-sample ~s
+estimate          0.21
+      se          1.37
+
+           overfitting
+estimate          8.68
+      se          3.05
+
+. 
+. *The higher the percentages, the more 
+> evidence of overfitting
+. 
+. *R COMMAND*
+. 
+. *#vif(reg.3)#*
+. 
+. *To calculate the Variance Inflation M
+> atrix (VIF) in Stata,
+. *we put vif after a reg command
+. 
+. quietly reg turnout candidate cvap
+
+. 
+. vif
+
+    Variable |       VIF       1/VIF  
+-------------+----------------------
+   candidate |      2.13    0.469772
+        cvap |      2.13    0.469772
+-------------+----------------------
+    Mean VIF |      2.13
+
+. 
+. *R COMMANDS*
+. 
+. *#bp.reg.3<-breusch_pagan(reg.3)
+. *bp.reg.3#*
+. 
+. *#w.reg.3<-white(reg.3)
+. *w.reg.3#*
+. 
+. *#resettest(reg.3, power = 3, 
+.           *type = "regressor", 
+.           *data = blackturnout)#*
+. 
+. *We can perform a Breusch-Pagan test b
+> y putting hettest
+. *after a reg command
+. 
+. quietly reg turnout candidate cvap
+
+. 
+. hettest
+
+Breusch-Pagan / Cook-Weisberg test for h
+> eteroskedasticity 
+         Ho: Constant variance
+         Variables: fitted values of
+                    turnout
+
+         chi2(1)      =     0.23
+         Prob > chi2  =   0.6284
+
+. 
+. *We can perform a White's test for het
+> eroskedasticity
+. *by putting imtest after a reg command
+> . The row labeled
+. *'Heteroskedasticity' is the White's t
+> est. Alternatively,
+. *you can also put 'imtest, white' to r
+> eport the White's
+. *test at the top of the output.
+. 
+. quietly reg turnout candidate cvap
+
+. 
+. imtest
+
+Cameron & Trivedi's decomposition of IM-
+> test
+
+----------------------------------------
+> -----------
+              Source |       chi2     df
+>       p
+---------------------+------------------
+> -----------
+  Heteroskedasticity |       1.20      4
+>     0.8781
+            Skewness |     102.81      2
+>     0.0000
+            Kurtosis |       0.02      1
+>     0.8882
+---------------------+------------------
+> -----------
+               Total |     104.03      7
+>     0.0000
+----------------------------------------
+> -----------
+
+. 
+. imtest, white
+
+White's test for Ho: homoskedasticity
+         against Ha: unrestricted hetero
+> skedasticity
+
+         chi2(4)      =      1.20
+         Prob > chi2  =    0.8781
+
+Cameron & Trivedi's decomposition of IM-
+> test
+
+----------------------------------------
+> -----------
+              Source |       chi2     df
+>       p
+---------------------+------------------
+> -----------
+  Heteroskedasticity |       1.20      4
+>     0.8781
+            Skewness |     102.81      2
+>     0.0000
+            Kurtosis |       0.02      1
+>     0.8882
+---------------------+------------------
+> -----------
+               Total |     104.03      7
+>     0.0000
+----------------------------------------
+> -----------
+
+. 
+. *We can perform a Ramsey RESET test by
+>  putting 
+. *estat ovtest after a reg command
+. 
+. quietly reg turnout candidate cvap
+
+. 
+. estat ovtest
+
+Ramsey RESET test using powers of the fi
+> tted values of turnout
+       Ho:  model has no omitted variabl
+> es
+                F(3, 1231) =      4.10
+                  Prob > F =      0.0066
+
+. 
+. *R COMMANDS*
+. 
+. *#blackturnout$interact<-(blackturnout
+> $candidate*blackturnout$CVAP)#*
+. 
+. *#reg.4<-lm(turnout ~ candidate + CVAP
+>  + interact, data = blackturnout)#*
+. 
+. *To do categorical-by-continuous inter
+> actions, we have to
+. *specify the interaction in the regres
+> sion formula itself.
+. 
+. *We specify the interaction directly i
+> n the regression formula 
+. *by putting '##' between the two varia
+> bles we want to interact. 
+. *We do not have to include the interac
+> ted variables in the equation 
+. *again because Stata will automaticall
+> y put them in the formula for us.
+. *We specify 'candidate' as a categoric
+> al variable by putting 'i.' in
+. *front of it and 'cvap' as a continuou
+> s variable by putting 'c.'
+. *in front of it.
+. 
+. reg turnout i.year##c.cvap
+
+      Source |       SS           df    
+>    MS      Number of obs   =     1,237
+-------------+--------------------------
+> --------   F(5, 1231)      =    377.67
+       Model |  22.1691408         5  4.
+> 43382817   Prob > F        =    0.0000
+    Residual |  14.4519295     1,231  .0
+> 11739991   R-squared       =    0.6054
+-------------+--------------------------
+> --------   Adj R-squared   =    0.6038
+       Total |  36.6210703     1,236  .0
+> 29628698   Root MSE        =    .10835
+
+----------------------------------------
+> --------------------------------------
+     turnout |      Coef.   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+        year |
+       2008  |   .2687098   .0100399    
+> 26.76                                 
+>         0.000                         
+>                   .2490125            
+>                                .288407
+       2010  |   .0187328   .0100407    
+>  1.87                                 
+>         0.062                         
+>                   -.000966            
+>                               .0384316
+             |
+        cvap |   .1171099   .0367041    
+>  3.19                                 
+>         0.001                         
+>                   .0451004            
+>                               .1891193
+             |
+ year#c.cvap |
+       2008  |   .1638314   .0514968    
+>  3.18                                 
+>         0.002                         
+>                   .0628002            
+>                               .2648625
+       2010  |   .0799939   .0508462    
+>  1.57                                 
+>         0.116                         
+>                  -.0197608            
+>                               .1797486
+             |
+       _cons |   .2785992   .0071502    
+> 38.96                                 
+>         0.000                         
+>                   .2645713            
+>                               .2926272
+----------------------------------------
+> --------------------------------------
+
+. 
+. *Sometimes, we want to specify categor
+> ical variables as continous
+. *in interactions since they might be o
+> rdinal. To do this we
+. *simply change the 'i.' in front of 'y
+> ear' to 'c.'
+. 
+. reg turnout c.year##c.cvap
+
+      Source |       SS           df    
+>    MS      Number of obs   =     1,237
+-------------+--------------------------
+> --------   F(3, 1233)      =     13.49
+       Model |  1.16364158         3  .3
+> 87880526   Prob > F        =    0.0000
+    Residual |  35.4574287     1,233  .0
+> 28757039   R-squared       =    0.0318
+-------------+--------------------------
+> --------   Adj R-squared   =    0.0294
+       Total |  36.6210703     1,236  .0
+> 29628698   Root MSE        =    .16958
+
+----------------------------------------
+> --------------------------------------
+     turnout |      Coef.   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+        year |   .0041828   .0039285    
+>  1.06                                 
+>         0.287                         
+>                  -.0035245            
+>                               .0118901
+        cvap |  -24.99233   39.93481    
+> -0.63                                 
+>         0.532                         
+>                    -103.34            
+>                               53.35536
+             |
+      c.year#|
+      c.cvap |   .0125429   .0198873    
+>  0.63                                 
+>         0.528                         
+>                  -.0264738            
+>                               .0515596
+             |
+       _cons |  -8.023253   7.888525    
+> -1.02                                 
+>         0.309                         
+>                  -23.49967            
+>                               7.453165
+----------------------------------------
+> --------------------------------------
+
+. 
+. *IMPORTANT: Unless otherwise specified
+> , Stata will treat the 
+. *two variables in the interaction you 
+> specify as factor (categorical)
+. *variables. If those variables contain
+>  non-integer (decimal) values
+. *then Stata will not run the model. To
+>  fix this, you can put 'c.'
+. *in front of the factor variable with 
+> non-integer values to have
+. *Stata treat the variable as continuou
+> s.
+. 
+. *IMPORTANT: Do not use '#' between two
+>  variables to interact them,
+. *only use '##'. Using '#' will include
+>  the interaction term
+. *but omit the interacted variable's an
+> d their main effects,
+. *which we almost never want to do (exc
+> ept when plotting
+. *interactions).
+. 
+. *An alternative way to specify an inte
+> raction in Stata 
+. *is to create the interaction as a new
+>  variable. Note,
+. *if we want to do categorical-by-conti
+> nuous or
+. *categorical-by-categorical interactio
+> ns and calculate the 
+. *interaction effect for each category,
+>  we have to specify the 
+. *interaction in the reg command using 
+> '##' and putting 'i.' in 
+. *front of the categorical variables. 
+. 
+. *Generate a new variable called 'candc
+> vap' that is the product
+. *of the variable's 'candidate' and 'cv
+> ap'. Stata, by default, 
+. *treats the two interacted variables a
+> s continuous.
+. 
+. gen candcvap = candidate * cvap
+
+. 
+. *In the reg command, we include the in
+> teraction variable
+. *as well as the two variable's we init
+> ally interacted.
+. 
+. reg turnout candidate cvap candcvap
+
+      Source |       SS           df    
+>    MS      Number of obs   =     1,237
+-------------+--------------------------
+> --------   F(3, 1233)      =     14.01
+       Model |  1.20739665         3   .
+> 40246555   Prob > F        =    0.0000
+    Residual |  35.4136736     1,233  .0
+> 28721552   R-squared       =    0.0330
+-------------+--------------------------
+> --------   Adj R-squared   =    0.0306
+       Total |  36.6210703     1,236  .0
+> 29628698   Root MSE        =    .16947
+
+----------------------------------------
+> --------------------------------------
+     turnout |      Coef.   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+   candidate |   .0568022   .0345855    
+>  1.64                                 
+>         0.101                         
+>                  -.0110507            
+>                               .1246552
+        cvap |   .3042864     .06249    
+>  4.87                                 
+>         0.000                         
+>                   .1816879            
+>                               .4268849
+    candcvap |  -.2282749   .0959158    
+> -2.38                                 
+>         0.017                         
+>                  -.4164511            
+>                              -.0400987
+       _cons |   .3665939   .0075976    
+> 48.25                                 
+>         0.000                         
+>                   .3516883            
+>                               .3814995
+----------------------------------------
+> --------------------------------------
+
+. 
+. *Notice the difference in the followin
+> g reg outputs 
+. *when we specify 'year' and 'cvap' as 
+> a categorical-by-continuous
+. *interaction in the reg command versus
+>  creating
+. *the interaction between 'year' and 'c
+> vap' as a
+. *new variable
+. 
+. *Stata treats the interaction as categ
+> orical-by-continuous
+. 
+. reg turnout i.year##c.cvap
+
+      Source |       SS           df    
+>    MS      Number of obs   =     1,237
+-------------+--------------------------
+> --------   F(5, 1231)      =    377.67
+       Model |  22.1691408         5  4.
+> 43382817   Prob > F        =    0.0000
+    Residual |  14.4519295     1,231  .0
+> 11739991   R-squared       =    0.6054
+-------------+--------------------------
+> --------   Adj R-squared   =    0.6038
+       Total |  36.6210703     1,236  .0
+> 29628698   Root MSE        =    .10835
+
+----------------------------------------
+> --------------------------------------
+     turnout |      Coef.   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+        year |
+       2008  |   .2687098   .0100399    
+> 26.76                                 
+>         0.000                         
+>                   .2490125            
+>                                .288407
+       2010  |   .0187328   .0100407    
+>  1.87                                 
+>         0.062                         
+>                   -.000966            
+>                               .0384316
+             |
+        cvap |   .1171099   .0367041    
+>  3.19                                 
+>         0.001                         
+>                   .0451004            
+>                               .1891193
+             |
+ year#c.cvap |
+       2008  |   .1638314   .0514968    
+>  3.18                                 
+>         0.002                         
+>                   .0628002            
+>                               .2648625
+       2010  |   .0799939   .0508462    
+>  1.57                                 
+>         0.116                         
+>                  -.0197608            
+>                               .1797486
+             |
+       _cons |   .2785992   .0071502    
+> 38.96                                 
+>         0.000                         
+>                   .2645713            
+>                               .2926272
+----------------------------------------
+> --------------------------------------
+
+. 
+. *Stata treats the interaction as conti
+> nuous-by-continuous
+. 
+. gen yearcvap = year * cvap
+
+. 
+. reg turnout year cvap yearcvap
+
+      Source |       SS           df    
+>    MS      Number of obs   =     1,237
+-------------+--------------------------
+> --------   F(3, 1233)      =     13.49
+       Model |    1.163639         3  .3
+> 87879666   Prob > F        =    0.0000
+    Residual |  35.4574313     1,233  .0
+> 28757041   R-squared       =    0.0318
+-------------+--------------------------
+> --------   Adj R-squared   =    0.0294
+       Total |  36.6210703     1,236  .0
+> 29628698   Root MSE        =    .16958
+
+----------------------------------------
+> --------------------------------------
+     turnout |      Coef.   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+        year |    .004183   .0039285    
+>  1.06                                 
+>         0.287                         
+>                  -.0035243            
+>                               .0118903
+        cvap |  -24.98941   39.93468    
+> -0.63                                 
+>         0.532                         
+>                  -103.3368            
+>                               53.35803
+    yearcvap |   .0125414   .0198872    
+>  0.63                                 
+>         0.528                         
+>                  -.0264751            
+>                                .051558
+       _cons |  -8.023628   7.888519    
+> -1.02                                 
+>         0.309                         
+>                  -23.50003            
+>                               7.452778
+----------------------------------------
+> --------------------------------------
+
+. 
+. *It even does so if we specify 'year' 
+> to be categorical
+. 
+. reg turnout i.year cvap yearcvap
+
+      Source |       SS           df    
+>    MS      Number of obs   =     1,237
+-------------+--------------------------
+> --------   F(4, 1232)      =    467.52
+       Model |  22.0768651         4  5.
+> 51921627   Prob > F        =    0.0000
+    Residual |  14.5442052     1,232  .0
+> 11805361   R-squared       =    0.6028
+-------------+--------------------------
+> --------   Adj R-squared   =    0.6016
+       Total |  36.6210703     1,236  .0
+> 29628698   Root MSE        =    .10865
+
+----------------------------------------
+> --------------------------------------
+     turnout |      Coef.   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+        year |
+       2008  |   .2847459   .0082742    
+> 34.41                                 
+>         0.000                         
+>                   .2685129            
+>                               .3009789
+       2010  |   .0189201   .0100684    
+>  1.88                                 
+>         0.060                         
+>                   -.000833            
+>                               .0386732
+             |
+        cvap |  -38.22022   25.58883    
+> -1.49                                 
+>         0.136                         
+>                  -88.42274            
+>                               11.98229
+    yearcvap |   .0191326   .0127431    
+>  1.50                                 
+>         0.134                         
+>                  -.0058679            
+>                               .0441332
+       _cons |    .273182   .0069033    
+> 39.57                                 
+>         0.000                         
+>                   .2596384            
+>                               .2867256
+----------------------------------------
+> --------------------------------------
+
+. 
+. *THE MARGINS COMMAND*
+. *The final thing we'll cover is the ma
+> rgins command in Stata.
+. *Beyond the predict() function, R does
+> n't have something
+. *built in like this (but there's proba
+> bly a package for it).
+. *The margins command in Stata lets us 
+> get predicted values
+. *for the dependent variable in a regre
+> ssion formula based
+. *off certain parameters of the indepen
+> dent variables. For example,
+. *if we had a regression with wages as 
+> the dependent variable and
+. *hours worked and years spent employed
+>  as two independent variables,
+. *we could use the margins command to s
+> ee what the predicted wages
+. *are for an employee that worked 40 ho
+> urs a week and had been
+. *employed for 10 years. Margins is als
+> o very useful for visualizing
+. *and giving context to interaction ter
+> ms.
+. 
+. *We'll use a pre-loaded dataset that c
+> omes with Stata for these
+. *examples. This is data from the 1988 
+> National Longitudinal
+. *Study of Workers on individual employ
+> ees. 
+. 
+. sysuse nlsw88, clear
+(NLSW, 1988 extract)
+
+. 
+. *Let's try and predict wages using hou
+> rs and tenure
+. 
+. reg wage hours tenure
+
+      Source |       SS           df    
+>    MS      Number of obs   =     2,227
+-------------+--------------------------
+> --------   F(2, 2224)      =     57.09
+       Model |  3614.71538         2  18
+> 07.35769   Prob > F        =    0.0000
+    Residual |  70406.0952     2,224  31
+> .6574169   R-squared       =    0.0488
+-------------+--------------------------
+> --------   Adj R-squared   =    0.0480
+       Total |  74020.8106     2,226  33
+> .2528349   Root MSE        =    5.6265
+
+----------------------------------------
+> --------------------------------------
+        wage |      Coef.   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+       hours |   .0735278   .0115285    
+>  6.38                                 
+>         0.000                         
+>                   .0509201            
+>                               .0961355
+      tenure |   .1630705     .02193    
+>  7.44                                 
+>         0.000                         
+>                   .1200651            
+>                               .2060759
+       _cons |   4.086522   .4445452    
+>  9.19                                 
+>         0.000                         
+>                   3.214755            
+>                               4.958289
+----------------------------------------
+> --------------------------------------
+
+. 
+. *we can use margins to look at the pre
+> dicted value of wages at 
+. *different values of hours dependent v
+> ariables. We'll look at what
+. *wages would look like at different va
+> lues of hours worked and 
+. *years employed.
+. 
+. margins, at(hours=(10 20 30 40 50 60 7
+> 0 80) tenure=(5 10 15 20 25))
+
+Adjusted predictions                    
+>         Number of obs                 
+>                           =      2,227
+Model VCE    : OLS
+
+Expression   : Linear prediction,
+               predict()
+
+1._at        : hours           =
+                        10
+               tenure          =
+                         5
+
+2._at        : hours           =
+                        10
+               tenure          =
+                        10
+
+3._at        : hours           =
+                        10
+               tenure          =
+                        15
+
+4._at        : hours           =
+                        10
+               tenure          =
+                        20
+
+5._at        : hours           =
+                        10
+               tenure          =
+                        25
+
+6._at        : hours           =
+                        20
+               tenure          =
+                         5
+
+7._at        : hours           =
+                        20
+               tenure          =
+                        10
+
+8._at        : hours           =
+                        20
+               tenure          =
+                        15
+
+9._at        : hours           =
+                        20
+               tenure          =
+                        20
+
+10._at       : hours           =
+                        20
+               tenure          =
+                        25
+
+11._at       : hours           =
+                        30
+               tenure          =
+                         5
+
+12._at       : hours           =
+                        30
+               tenure          =
+                        10
+
+13._at       : hours           =
+                        30
+               tenure          =
+                        15
+
+14._at       : hours           =
+                        30
+               tenure          =
+                        20
+
+15._at       : hours           =
+                        30
+               tenure          =
+                        25
+
+16._at       : hours           =
+                        40
+               tenure          =
+                         5
+
+17._at       : hours           =
+                        40
+               tenure          =
+                        10
+
+18._at       : hours           =
+                        40
+               tenure          =
+                        15
+
+19._at       : hours           =
+                        40
+               tenure          =
+                        20
+
+20._at       : hours           =
+                        40
+               tenure          =
+                        25
+
+21._at       : hours           =
+                        50
+               tenure          =
+                         5
+
+22._at       : hours           =
+                        50
+               tenure          =
+                        10
+
+23._at       : hours           =
+                        50
+               tenure          =
+                        15
+
+24._at       : hours           =
+                        50
+               tenure          =
+                        20
+
+25._at       : hours           =
+                        50
+               tenure          =
+                        25
+
+26._at       : hours           =
+                        60
+               tenure          =
+                         5
+
+27._at       : hours           =
+                        60
+               tenure          =
+                        10
+
+28._at       : hours           =
+                        60
+               tenure          =
+                        15
+
+29._at       : hours           =
+                        60
+               tenure          =
+                        20
+
+30._at       : hours           =
+                        60
+               tenure          =
+                        25
+
+31._at       : hours           =
+                        70
+               tenure          =
+                         5
+
+32._at       : hours           =
+                        70
+               tenure          =
+                        10
+
+33._at       : hours           =
+                        70
+               tenure          =
+                        15
+
+34._at       : hours           =
+                        70
+               tenure          =
+                        20
+
+35._at       : hours           =
+                        70
+               tenure          =
+                        25
+
+36._at       : hours           =
+                        80
+               tenure          =
+                         5
+
+37._at       : hours           =
+                        80
+               tenure          =
+                        10
+
+38._at       : hours           =
+                        80
+               tenure          =
+                        15
+
+39._at       : hours           =
+                        80
+               tenure          =
+                        20
+
+40._at       : hours           =
+                        80
+               tenure          =
+                        25
+
+----------------------------------------
+> --------------------------------------
+             |            Delta-method
+             |     Margin   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+         _at |
+          1  |   5.637152   .3333482    
+> 16.91                                 
+>         0.000                         
+>                   4.983446            
+>                               6.290859
+          2  |   6.452505   .3598614    
+> 17.93                                 
+>         0.000                         
+>                   5.746805            
+>                               7.158204
+          3  |   7.267857   .4146392    
+> 17.53                                 
+>         0.000                         
+>                   6.454737            
+>                               8.080978
+          4  |    8.08321   .4882595    
+> 16.56                                 
+>         0.000                         
+>                   7.125718            
+>                               9.040702
+          5  |   8.898563   .5735113    
+> 15.52                                 
+>         0.000                         
+>                   7.773889            
+>                               10.02324
+          6  |    6.37243   .2297898    
+> 27.73                                 
+>         0.000                         
+>                   5.921805            
+>                               6.823055
+          7  |   7.187783   .2590674    
+> 27.74                                 
+>         0.000                         
+>                   6.679743            
+>                               7.695822
+          8  |   8.003135   .3247688    
+> 24.64                                 
+>         0.000                         
+>                   7.366254            
+>                               8.640017
+          9  |   8.818488   .4097314    
+> 21.52                                 
+>         0.000                         
+>                   8.014992            
+>                               9.621984
+         10  |   9.633841   .5043126    
+> 19.10                                 
+>         0.000                         
+>                   8.644868            
+>                               10.62281
+         11  |   7.107708   .1451445    
+> 48.97                                 
+>         0.000                         
+>                   6.823075            
+>                               7.392341
+         12  |   7.923061   .1769546    
+> 44.77                                 
+>         0.000                         
+>                   7.576047            
+>                               8.270074
+         13  |   8.738413   .2561351    
+> 34.12                                 
+>         0.000                         
+>                   8.236124            
+>                               9.240702
+         14  |   9.553766   .3520563    
+> 27.14                                 
+>         0.000                         
+>                   8.863372            
+>                               10.24416
+         15  |   10.36912   .4542339    
+> 22.83                                 
+>         0.000                         
+>                   9.478352            
+>                               11.25989
+         16  |   7.842986   .1261417    
+> 62.18                                 
+>         0.000                         
+>                   7.595618            
+>                               8.090354
+         17  |   8.658339   .1486309    
+> 58.25                                 
+>         0.000                         
+>                   8.366869            
+>                               8.949808
+         18  |   9.473691   .2287287    
+> 41.42                                 
+>         0.000                         
+>                   9.025147            
+>                               9.922235
+         19  |   10.28904   .3264793    
+> 31.52                                 
+>         0.000                         
+>                   9.648808            
+>                               10.92928
+         20  |    11.1044    .430008    
+> 25.82                                 
+>         0.000                         
+>                   10.26114            
+>                               11.94766
+         21  |   8.578264   .1932299    
+> 44.39                                 
+>         0.000                         
+>                   8.199334            
+>                               8.957194
+         22  |   9.393617   .1986218    
+> 47.29                                 
+>         0.000                         
+>                   9.004113            
+>                                9.78312
+         23  |   10.20897   .2561439    
+> 39.86                                 
+>         0.000                         
+>                   9.706663            
+>                               10.71128
+         24  |   11.02432    .340316    
+> 32.39                                 
+>         0.000                         
+>                   10.35695            
+>                               11.69169
+         25  |   11.83967   .4359663    
+> 27.16                                 
+>         0.000                         
+>                   10.98473            
+>                               12.69462
+         26  |   9.313542   .2921388    
+> 31.88                                 
+>         0.000                         
+>                   8.740648            
+>                               9.886435
+         27  |   10.12889   .2887756    
+> 35.08                                 
+>         0.000                         
+>                   9.562597            
+>                               10.69519
+         28  |   10.94425   .3247827    
+> 33.70                                 
+>         0.000                         
+>                   10.30734            
+>                               11.58116
+         29  |    11.7596   .3893874    
+> 30.20                                 
+>         0.000                         
+>                     10.996            
+>                                12.5232
+         30  |   12.57495   .4709645    
+> 26.70                                 
+>         0.000                         
+>                   11.65138            
+>                               13.49853
+         31  |   10.04882    .399917    
+> 25.13                                 
+>         0.000                         
+>                    9.26457            
+>                               10.83307
+         32  |   10.86417   .3923178    
+> 27.69                                 
+>         0.000                         
+>                   10.09482            
+>                               11.63352
+         33  |   11.67952   .4146555    
+> 28.17                                 
+>         0.000                         
+>                   10.86637            
+>                               12.49268
+         34  |   12.49488   .4626136    
+> 27.01                                 
+>         0.000                         
+>                   11.58768            
+>                               13.40208
+         35  |   13.31023   .5292728    
+> 25.15                                 
+>         0.000                         
+>                   12.27231            
+>                               14.34815
+         36  |    10.7841   .5109828    
+> 21.10                                 
+>         0.000                         
+>                   9.782044            
+>                               11.78615
+         37  |   11.59945   .5010155    
+> 23.15                                 
+>         0.000                         
+>                   10.61694            
+>                               12.58196
+         38  |    12.4148    .514758    
+> 24.12                                 
+>         0.000                         
+>                   11.40535            
+>                               13.42426
+         39  |   13.23016   .5504374    
+> 24.04                                 
+>         0.000                         
+>                   12.15073            
+>                               14.30958
+         40  |   14.04551   .6041798    
+> 23.25                                 
+>         0.000                         
+>                   12.86069            
+>                               15.23032
+----------------------------------------
+> --------------------------------------
+
+. 
+. *What we get is messy, but we can use 
+> marginsplot to visualize
+. *what we see in the initial output.
+. 
+. *putting noci after the comma here tel
+> ls Stata not to put confidence
+. *intervals around each point estimate 
+> (graph looks nicer).
+. 
+. marginsplot, noci
+
+  Variables that uniquely identify
+      margins: hours tenure
+
+. 
+. *We can also use margins to contextual
+> ize and visualize interaction
+. *terms.
+. 
+. *This time we'll try and predict wages
+>  with an interaction between
+. *work experience and years employed.
+. 
+. *Our two independent variables contain
+>  non-integer (decimal) values,
+. *so we'll need to put 'c.' in front of
+>  them so Stata will treat
+. *them as continuous. If the values wer
+> e whole numbers, we could run
+. *the interaction without the 'c.'s in 
+> front of our independent
+. *variables.
+. 
+. reg wage c.ttl_exp##c.tenure
+
+      Source |       SS           df    
+>    MS      Number of obs   =     2,231
+-------------+--------------------------
+> --------   F(3, 2227)      =     57.36
+       Model |  5315.08401         3  17
+> 71.69467   Prob > F        =    0.0000
+    Residual |  68786.7436     2,227  30
+> .8876262   R-squared       =    0.0717
+-------------+--------------------------
+> --------   Adj R-squared   =    0.0705
+       Total |  74101.8276     2,230  33
+> .2295191   Root MSE        =    5.5577
+
+----------------------------------------
+> --------------------------------------
+        wage |      Coef.   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+     ttl_exp |   .3364475   .0361822    
+>  9.30                                 
+>         0.000                         
+>                   .2654932            
+>                               .4074019
+      tenure |   .2104419    .090343    
+>  2.33                                 
+>         0.020                         
+>                   .0332766            
+>                               .3876072
+             |
+   c.ttl_exp#|
+    c.tenure |  -.0102025   .0052043    
+> -1.96                                 
+>         0.050                         
+>                  -.0204083            
+>                               3.21e-06
+             |
+       _cons |   3.225362   .4464755    
+>  7.22                                 
+>         0.000                         
+>                    2.34981            
+>                               4.100913
+----------------------------------------
+> --------------------------------------
+
+. 
+. margins, at(ttl_exp=(5 10 15 20 25 30)
+>  tenure=(5 10 15 20 25 30))
+
+Adjusted predictions                    
+>         Number of obs                 
+>                           =      2,231
+Model VCE    : OLS
+
+Expression   : Linear prediction,
+               predict()
+
+1._at        : ttl_exp         =
+                         5
+               tenure          =
+                         5
+
+2._at        : ttl_exp         =
+                         5
+               tenure          =
+                        10
+
+3._at        : ttl_exp         =
+                         5
+               tenure          =
+                        15
+
+4._at        : ttl_exp         =
+                         5
+               tenure          =
+                        20
+
+5._at        : ttl_exp         =
+                         5
+               tenure          =
+                        25
+
+6._at        : ttl_exp         =
+                         5
+               tenure          =
+                        30
+
+7._at        : ttl_exp         =
+                        10
+               tenure          =
+                         5
+
+8._at        : ttl_exp         =
+                        10
+               tenure          =
+                        10
+
+9._at        : ttl_exp         =
+                        10
+               tenure          =
+                        15
+
+10._at       : ttl_exp         =
+                        10
+               tenure          =
+                        20
+
+11._at       : ttl_exp         =
+                        10
+               tenure          =
+                        25
+
+12._at       : ttl_exp         =
+                        10
+               tenure          =
+                        30
+
+13._at       : ttl_exp         =
+                        15
+               tenure          =
+                         5
+
+14._at       : ttl_exp         =
+                        15
+               tenure          =
+                        10
+
+15._at       : ttl_exp         =
+                        15
+               tenure          =
+                        15
+
+16._at       : ttl_exp         =
+                        15
+               tenure          =
+                        20
+
+17._at       : ttl_exp         =
+                        15
+               tenure          =
+                        25
+
+18._at       : ttl_exp         =
+                        15
+               tenure          =
+                        30
+
+19._at       : ttl_exp         =
+                        20
+               tenure          =
+                         5
+
+20._at       : ttl_exp         =
+                        20
+               tenure          =
+                        10
+
+21._at       : ttl_exp         =
+                        20
+               tenure          =
+                        15
+
+22._at       : ttl_exp         =
+                        20
+               tenure          =
+                        20
+
+23._at       : ttl_exp         =
+                        20
+               tenure          =
+                        25
+
+24._at       : ttl_exp         =
+                        20
+               tenure          =
+                        30
+
+25._at       : ttl_exp         =
+                        25
+               tenure          =
+                         5
+
+26._at       : ttl_exp         =
+                        25
+               tenure          =
+                        10
+
+27._at       : ttl_exp         =
+                        25
+               tenure          =
+                        15
+
+28._at       : ttl_exp         =
+                        25
+               tenure          =
+                        20
+
+29._at       : ttl_exp         =
+                        25
+               tenure          =
+                        25
+
+30._at       : ttl_exp         =
+                        25
+               tenure          =
+                        30
+
+31._at       : ttl_exp         =
+                        30
+               tenure          =
+                         5
+
+32._at       : ttl_exp         =
+                        30
+               tenure          =
+                        10
+
+33._at       : ttl_exp         =
+                        30
+               tenure          =
+                        15
+
+34._at       : ttl_exp         =
+                        30
+               tenure          =
+                        20
+
+35._at       : ttl_exp         =
+                        30
+               tenure          =
+                        25
+
+36._at       : ttl_exp         =
+                        30
+               tenure          =
+                        30
+
+----------------------------------------
+> --------------------------------------
+             |            Delta-method
+             |     Margin   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+         _at |
+          1  |   5.704746   .2765562    
+> 20.63                                 
+>         0.000                         
+>                   5.162411            
+>                               6.247081
+          2  |   6.501892   .5321111    
+> 12.22                                 
+>         0.000                         
+>                   5.458406            
+>                               7.545378
+          3  |   7.299038   .8406672    
+>  8.68                                 
+>         0.000                         
+>                   5.650465            
+>                               8.947612
+          4  |   8.096185   1.160698    
+>  6.98                                 
+>         0.000                         
+>                   5.820021            
+>                               10.37235
+          5  |   8.893331   1.484803    
+>  5.99                                 
+>         0.000                         
+>                   5.981588            
+>                               11.80507
+          6  |   9.690477   1.810795    
+>  5.35                                 
+>         0.000                         
+>                   6.139454            
+>                                13.2415
+          7  |    7.13192   .1556256    
+> 45.83                                 
+>         0.000                         
+>                   6.826733            
+>                               7.437107
+          8  |   7.674003   .3198296    
+> 23.99                                 
+>         0.000                         
+>                   7.046808            
+>                               8.301198
+          9  |   8.216086   .5232792    
+> 15.70                                 
+>         0.000                         
+>                    7.18992            
+>                               9.242252
+         10  |   8.758169   .7340368    
+> 11.93                                 
+>         0.000                         
+>                   7.318701            
+>                               10.19764
+         11  |   9.300252   .9472367    
+>  9.82                                 
+>         0.000                         
+>                   7.442693            
+>                               11.15781
+         12  |   9.842335   1.161535    
+>  8.47                                 
+>         0.000                         
+>                   7.564531            
+>                               12.12014
+         13  |   8.559094   .1546585    
+> 55.34                                 
+>         0.000                         
+>                   8.255804            
+>                               8.862384
+         14  |   8.846114    .166196    
+> 53.23                                 
+>         0.000                         
+>                   8.520199            
+>                                9.17203
+         15  |   9.133134   .2627379    
+> 34.76                                 
+>         0.000                         
+>                   8.617897            
+>                               9.648371
+         16  |   9.420154    .384902    
+> 24.47                                 
+>         0.000                         
+>                    8.66535            
+>                               10.17496
+         17  |   9.707174   .5147583    
+> 18.86                                 
+>         0.000                         
+>                   8.697718            
+>                               10.71663
+         18  |   9.994194   .6476967    
+> 15.43                                 
+>         0.000                         
+>                   8.724041            
+>                               11.26435
+         19  |   9.986269   .2749238    
+> 36.32                                 
+>         0.000                         
+>                   9.447135            
+>                                10.5254
+         20  |   10.01823   .2431723    
+> 41.20                                 
+>         0.000                         
+>                   9.541357            
+>                               10.49509
+         21  |   10.05018   .3038938    
+> 33.07                                 
+>         0.000                         
+>                   9.454237            
+>                               10.64613
+         22  |   10.08214   .4186158    
+> 24.08                                 
+>         0.000                         
+>                   9.261221            
+>                               10.90306
+         23  |    10.1141   .5547936    
+> 18.23                                 
+>         0.000                         
+>                   9.026129            
+>                               11.20206
+         24  |   10.14605   .7000156    
+> 14.49                                 
+>         0.000                         
+>                   8.773301            
+>                                11.5188
+         25  |   11.41344    .423333    
+> 26.96                                 
+>         0.000                         
+>                   10.58327            
+>                               12.24361
+         26  |   11.19034   .4436506    
+> 25.22                                 
+>         0.000                         
+>                   10.32032            
+>                               12.06035
+         27  |   10.96723   .5863292    
+> 18.70                                 
+>         0.000                         
+>                   9.817421            
+>                               12.11704
+         28  |   10.74412   .7874509    
+> 13.64                                 
+>         0.000                         
+>                   9.199909            
+>                               12.28834
+         29  |   10.52102   1.012777    
+> 10.39                                 
+>         0.000                         
+>                   8.534931            
+>                                12.5071
+         30  |   10.29791   1.249278    
+>  8.24                                 
+>         0.000                         
+>                   7.848039            
+>                               12.74778
+         31  |   12.84062   .5786212    
+> 22.19                                 
+>         0.000                         
+>                   11.70592            
+>                               13.97531
+         32  |   12.36245   .6638527    
+> 18.62                                 
+>         0.000                         
+>                   11.06061            
+>                               13.66428
+         33  |   11.88428   .9073712    
+> 13.10                                 
+>         0.000                         
+>                    10.1049            
+>                               13.66366
+         34  |   11.40611   1.217649    
+>  9.37                                 
+>         0.000                         
+>                   9.018263            
+>                               13.79395
+         35  |   10.92794    1.55523    
+>  7.03                                 
+>         0.000                         
+>                   7.878087            
+>                               13.97779
+         36  |   10.44977   1.905658    
+>  5.48                                 
+>         0.000                         
+>                   6.712716            
+>                               14.18682
+----------------------------------------
+> --------------------------------------
+
+. 
+. marginsplot, noci
+
+  Variables that uniquely identify
+      margins: ttl_exp tenure
+
+. 
+. *The plot helps us visualize how the e
+> ffect of work experience on
+. *wages increses as an employee's tenur
+> e at a workplace increases.
+. 
+. *We can also calculate the predicted v
+> alue of wages at the mean values
+. *of experience and tenure.
+. 
+. margins, atmeans
+
+Adjusted predictions                    
+>         Number of obs                 
+>                           =      2,231
+Model VCE    : OLS
+
+Expression   : Linear prediction,
+               predict()
+at           : ttl_exp         =
+                  12.55485 (mean)
+               tenure          =
+                   5.97785 (mean)
+
+----------------------------------------
+> --------------------------------------
+             |            Delta-method
+             |     Margin   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+       _cons |    7.94169   .1401436    
+> 56.67                                 
+>         0.000                         
+>                   7.666864            
+>                               8.216516
+----------------------------------------
+> --------------------------------------
+
+. 
+. *We can also use margins to look at an
+> d visualize dichotomous
+. *interactions as well.
+. 
+. *Let's make a dummy variable for being
+>  white
+. 
+. gen white = race == 1
+
+. 
+. quietly reg wage union##white
+
+. 
+. *We specify the interaction here in fr
+> ont of the margins command 
+. *since it is a dichotomous-by-dichotom
+> ous interaction. Stata will 
+. *calculate the predicted wages for eac
+> h combination of the 
+. *interaction term.
+. 
+. margins union#white
+
+Adjusted predictions                    
+>         Number of obs                 
+>                           =      1,878
+Model VCE    : OLS
+
+Expression   : Linear prediction,
+               predict()
+
+----------------------------------------
+> --------------------------------------
+             |            Delta-method
+             |     Margin   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+ union#white |
+ nonunion#0  |   6.120844   .2135515    
+> 28.66                                 
+>         0.000                         
+>                    5.70202            
+>                               6.539668
+ nonunion#1  |     7.5821   .1260207    
+> 60.17                                 
+>         0.000                         
+>                   7.334944            
+>                               7.829255
+    union#0  |   8.557228   .3239996    
+> 26.41                                 
+>         0.000                         
+>                    7.92179            
+>                               9.192666
+    union#1  |   8.735928    .235093    
+> 37.16                                 
+>         0.000                         
+>                   8.274857            
+>                                  9.197
+----------------------------------------
+> --------------------------------------
+
+. 
+. *we can also do the margins command qu
+> ietly as well.
+. 
+. quietly margins union#white
+
+. 
+. marginsplot, noci
+
+  Variables that uniquely identify
+      margins: union white
+
+. 
+. *The plot here helps visualize how uni
+> on membership can help
+. *alleviate racial disparities in wages
+> .
+. 
+. *Finally, let's look at an interaction
+>  with a categorical
+. *variable that contains only integer (
+> whole number)
+. *values.
+. 
+. *Let's look at racial differences in w
+> ages by occupation.
+. 
+. quietly reg wage white##i.occupation
+
+. 
+. *We use '#' instead of '##' here becau
+> se we only want to plot
+. *the main effect of the interaction. 
+. 
+. margins white#i.occupation
+
+Adjusted predictions                    
+>         Number of obs                 
+>                           =      2,237
+Model VCE    : OLS
+
+Expression   : Linear prediction,
+               predict()
+
+----------------------------------------
+> --------------------------------------
+             |            Delta-method
+             |     Margin   Std. Err.   
+>    t                                  
+>         P>|t|                         
+>                   [95% Con            
+>                           f. Interval]
+-------------+--------------------------
+> --------------------------------------
+       white#|
+  occupation |
+          0 #|
+Professio~l  |   11.25495   .6513503    
+> 17.28                                 
+>         0.000                         
+>                   9.977627            
+>                               12.53227
+          0 #|
+Managers/~n  |   9.785885   .9350011    
+> 10.47                                 
+>         0.000                         
+>                   7.952314            
+>                               11.61946
+    0#Sales  |   7.215461   .4025864    
+> 17.92                                 
+>         0.000                         
+>                   6.425974            
+>                               8.004947
+          0 #|
+Clerical/~d  |   8.899967   1.550524    
+>  5.74                                 
+>         0.000                         
+>                   5.859333            
+>                                11.9406
+0#Craftsmen  |   7.492729   1.232231    
+>  6.08                                 
+>         0.000                         
+>                   5.076278            
+>                                9.90918
+          0 #|
+ Operatives  |   5.259249   .4882884    
+> 10.77                                 
+>         0.000                         
+>                   4.301698            
+>                               6.216801
+0#Transport  |   2.819912   1.342793    
+>  2.10                                 
+>         0.036                         
+>                    .186646            
+>                               5.453179
+ 0#Laborers  |    4.40904    .514465    
+>  8.57                                 
+>         0.000                         
+>                   3.400155            
+>                               5.417925
+  0#Farmers  |          .  (not estimabl
+> e)
+          0 #|
+Farm labo..  |   2.755687   2.192772    
+>  1.26                                 
+>         0.209                         
+>                  -1.544419            
+>                               7.055793
+  0#Service  |   6.377585   2.192772    
+>  2.91                                 
+>         0.004                         
+>                   2.077479            
+>                               10.67769
+          0 #|
+Household..  |          .  (not estimabl
+> e)
+    0#Other  |   9.246544   .8492569    
+> 10.89                                 
+>         0.000                         
+>                   7.581121            
+>                               10.91197
+          1 #|
+Professio~l  |   10.57852   .3403842    
+> 31.08                                 
+>         0.000                         
+>                   9.911017            
+>                               11.24603
+          1 #|
+Managers/~n  |   11.05891   .3533972    
+> 31.29                                 
+>         0.000                         
+>                   10.36589            
+>                               11.75194
+    1#Sales  |   7.134685   .2294451    
+> 31.10                                 
+>         0.000                         
+>                   6.684734            
+>                               7.584635
+          1 #|
+Clerical/~d  |   8.465581   .5661713    
+> 14.95                                 
+>         0.000                         
+>                   7.355299            
+>                               9.575864
+1#Craftsmen  |   6.963133   .9211485    
+>  7.56                                 
+>         0.000                         
+>                   5.156727            
+>                               8.769539
+          1 #|
+ Operatives  |   6.035737   .4804123    
+> 12.56                                 
+>         0.000                         
+>                   5.093631            
+>                               6.977843
+1#Transport  |   3.707936   1.550524    
+>  2.39                                 
+>         0.017                         
+>                   .6673014            
+>                                6.74857
+ 1#Laborers  |   5.211859   .4037221    
+> 12.91                                 
+>         0.000                         
+>                   4.420145            
+>                               6.003573
+  1#Farmers  |    8.05153   5.371173    
+>  1.50                                 
+>         0.134                         
+>                  -2.481536            
+>                                18.5846
+          1 #|
+Farm labo..  |   3.739832   3.101048    
+>  1.21                                 
+>         0.228                         
+>                  -2.341436            
+>                                 9.8211
+  1#Service  |   5.755438   1.698514    
+>  3.39                                 
+>         0.001                         
+>                    2.42459            
+>                               9.086286
+          1 #|
+Household..  |   6.388888   3.797993    
+>  1.68                                 
+>         0.093                         
+>                  -1.059114            
+>                               13.83689
+    1#Other  |   8.724661   .4430068    
+> 19.69                                 
+>         0.000                         
+>                   7.855908            
+>                               9.593413
+----------------------------------------
+> --------------------------------------
+
+. 
+. marginsplot, noci
+
+  Variables that uniquely identify
+      margins: white occupation
+
+. 
+. *This plot helps visualize the differe
+> nce in predicted
+. *wages for whites v. non-whites by occ
+> upation
+. 
+end of do-file
+
